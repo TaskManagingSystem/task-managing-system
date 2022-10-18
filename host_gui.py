@@ -1,5 +1,6 @@
 # -*- coding: shift_jis -*-
 
+from multiprocessing.sharedctypes import Value
 import tkinter as tk
 from tkinter import ttk
 import time
@@ -13,9 +14,9 @@ def main():
     def get_time():
         while True:
             now = datetime.now()
-            tm = u'{:02}æœˆ{:02}æ—¥{:02}:{:02}:{:02}'.format(now.month,now.day,now.hour,now.minute,now.second)
+            tm = u'{:02}Œ{:02}“ú{:02}:{:02}:{:02}'.format(now.month,now.day,now.hour,now.minute,now.second)
             clock.delete('all')
-            clock.create_text(320,50,text=tm,font=(None,36))
+            clock.create_text(300,50,text=tm,font=(None,36))
             t1 = now-start_time
             t2 = finish_time-start_time
             progress_per = t1.total_seconds()/t2.total_seconds()
@@ -24,7 +25,7 @@ def main():
             progress.create_rectangle(int(1000*progress_per),0,1000,60,fill='orange')
             time.sleep(1)
 
-    app_title = u'ã‚¿ã‚¹ã‚¯ç®¡ç†'
+    app_title = u'ƒ^ƒXƒNŠÇ—'
     app_title_label = tk.Label(
         root,text=app_title,
         font=(None,30)
@@ -32,21 +33,21 @@ def main():
     app_title_label.grid(column=1,row=0,sticky=tk.W)
 
     clock = tk.Canvas(root,width=500,height=100)
-    clock.grid(column=3,row=0)
+    clock.grid(column=3,row=0,columnspan=3)
 
     blank = tk.Canvas(root,width=50,height=1)
     blank.grid(column=0,row=0)
 
-    start_time = datetime(2022,10,17,13,7,20)
-    finish_time = datetime(2022,10,17,13,9,0)
+    start_time = datetime(2022,10,18,12,36,52)
+    finish_time = datetime(2022,10,18,15,10,00)
 
     time_label = tk.Label(
-        root,text=u'é–‹å§‹ã€€{:02}/{:02}ã€€{:02}:{:02}\nçµ‚äº†ã€€{:02}/{:02}ã€€{:02}:{:02}'.format(start_time.month,start_time.day,start_time.hour,start_time.minute,finish_time.month,finish_time.day,finish_time.hour,finish_time.minute),
+        root,text=u'ŠJn@{:02}/{:02}@{:02}:{:02}\nI—¹@{:02}/{:02}@{:02}:{:02}'.format(start_time.month,start_time.day,start_time.hour,start_time.minute,finish_time.month,finish_time.day,finish_time.hour,finish_time.minute),
         font=(None,'16')
     )
     time_label.grid(column=1,row=1,padx=15,sticky=tk.W)
 
-    task_name = u'ã‚¿ã‚¹ã‚¯å'
+    task_name = u'ƒ^ƒXƒN–¼'
     if len(task_name.encode('shift_jis'))<30:
         task_name = task_name+' '*(30-len(task_name.encode('shift_jis')))
     task_name_label = tk.Label(
@@ -55,14 +56,14 @@ def main():
         )
     task_name_label.grid(column=2,row=1,padx=15,sticky=tk.W)
 
-    person_name = u'èŠæµ¦å¤ªéƒ'
+    person_name = u'd– ‘¾˜Y'
     person_name_label = tk.Label(
         root,text = 'by {0}'.format(person_name),
         font=(None,'16')
     )
-    person_name_label.grid(column=3,row=1,padx=15)
+    person_name_label.grid(column=3,row=1,padx=15,columnspan=3)
 
-    explanation = u'èª¬æ˜'
+    explanation = u'à–¾'
     explanation_label = tk.Label(
         root,text = explanation,
         font=(None,'12'),
@@ -70,45 +71,103 @@ def main():
     explanation_label.grid(column=1,row=2,padx=15,pady=10,sticky=tk.W)
 
     progress = tk.Canvas(root,width=1000,height=60)
-    progress.grid(column=1,row=3,padx=15,columnspan=3)
+    progress.grid(column=1,row=3,padx=15,columnspan=6)
 
     next_task_title_label = tk.Label(
-        root,text=u'æ¬¡ã®ã‚¿ã‚¹ã‚¯',
+        root,text=u'Ÿ‚Ìƒ^ƒXƒN',
         font=(None,'16')
     )
     next_task_title_label.grid(column=1,row=4,padx=15,pady=30,sticky=tk.W)
 
     taskList = [
-        ['10C7',datetime(2022,10,17,10,0,0),datetime(2022,10,17,10,20,0),u'äºº1',u'ã‚¿ã‚¹ã‚¯1'],
-        ['10C8',datetime(2022,10,17,10,30,0),datetime(2022,10,17,10,50,0),u'äºº2',u'ã‚¿ã‚¹ã‚¯2'],
-        ['10C9',datetime(2022,10,17,11,0,0),datetime(2022,10,17,11,20,0),u'äºº3',u'ã‚¿ã‚¹ã‚¯3'],
-        ['10CA',datetime(2022,10,17,11,30,0),datetime(2022,10,17,11,50,0),u'äºº4',u'ã‚¿ã‚¹ã‚¯4'],
-        ['10CB',datetime(2022,10,17,12,0,0),datetime(2022,10,17,12,20,0),u'äºº5',u'ã‚¿ã‚¹ã‚¯5'],
-        ['10CC',datetime(2022,10,17,12,30,0),datetime(2022,10,17,12,50,0),u'äºº6',u'ã‚¿ã‚¹ã‚¯6'],
-        ['10CD',datetime(2022,10,17,13,0,0),datetime(2022,10,17,13,20,0),u'äºº7',u'ã‚¿ã‚¹ã‚¯7'],
-        ['10CE',datetime(2022,10,17,13,30,0),datetime(2022,10,17,10,50,0),u'äºº8',u'ã‚¿ã‚¹ã‚¯8']
+        ['10C7',datetime(2022,10,17,10,0,0),datetime(2022,10,17,10,20,0),u'l1',u'ƒ^ƒXƒN1'],
+        ['10C8',datetime(2022,10,17,10,30,0),datetime(2022,10,17,10,50,0),u'l2',u'ƒ^ƒXƒN2'],
+        ['10C9',datetime(2022,10,17,11,0,0),datetime(2022,10,17,11,20,0),u'l3',u'ƒ^ƒXƒN3'],
+        ['10CA',datetime(2022,10,17,11,30,0),datetime(2022,10,17,11,50,0),u'l4',u'ƒ^ƒXƒN4'],
+        ['10CB',datetime(2022,10,17,12,0,0),datetime(2022,10,17,12,20,0),u'l5',u'ƒ^ƒXƒN5'],
+        ['10CC',datetime(2022,10,17,12,30,0),datetime(2022,10,17,12,50,0),u'l6',u'ƒ^ƒXƒN6'],
+        ['10CD',datetime(2022,10,17,13,0,0),datetime(2022,10,17,13,20,0),u'l7',u'ƒ^ƒXƒN7'],
+        ['10CE',datetime(2022,10,17,13,30,0),datetime(2022,10,17,10,50,0),u'l8',u'ƒ^ƒXƒN8'],
+        ['10C7',datetime(2022,10,17,10,0,0),datetime(2022,10,17,10,20,0),u'l1',u'ƒ^ƒXƒN1'],
+        ['10C8',datetime(2022,10,17,10,30,0),datetime(2022,10,17,10,50,0),u'l2',u'ƒ^ƒXƒN2'],
+        ['10C9',datetime(2022,10,17,11,0,0),datetime(2022,10,17,11,20,0),u'l3',u'ƒ^ƒXƒN3'],
+        ['10CA',datetime(2022,10,17,11,30,0),datetime(2022,10,17,11,50,0),u'l4',u'ƒ^ƒXƒN4'],
+        ['10CB',datetime(2022,10,17,12,0,0),datetime(2022,10,17,12,20,0),u'l5',u'ƒ^ƒXƒN5'],
+        ['10CC',datetime(2022,10,17,12,30,0),datetime(2022,10,17,12,50,0),u'l6',u'ƒ^ƒXƒN6'],
+        ['10CD',datetime(2022,10,17,13,0,0),datetime(2022,10,17,13,20,0),u'l7',u'ƒ^ƒXƒN7'],
+        ['10CE',datetime(2022,10,17,13,30,0),datetime(2022,10,17,10,50,0),u'l8',u'ƒ^ƒXƒN8']
     ]
     
-    # åˆ—ã®è­˜åˆ¥åã®æŒ‡å®š
-    taskList_column = ('ID',u'é–‹å§‹',u'çµ‚äº†',u'äºº',u'åå‰')
-    # Treeviewã®ç”Ÿæˆ
+    # —ñ‚Ì¯•Ê–¼‚Ìw’è
+    taskList_column = ('ID',u'ŠJn',u'I—¹',u'l',u'–¼‘O')
+    
+    def select_record(event):
+        record_id =taskList_tree.focus()
+        task_edit_title_label = tk.Label(
+        root,text=u'ƒ^ƒXƒN•ÒW',
+        font=(None,16)
+        )
+        task_edit_title_label.grid(column=3,row=4,padx=15,pady=10,sticky=tk.W,columnspan=3)
+        task_edit_table_label = tk.Label(
+            root,text=u'€–Ú',
+            font=(None,12)
+        )
+        task_edit_table_label.grid(column=3,row=5,pady=3,sticky=tk.W)
+        task_edit_table_label = tk.Label(
+            root,text=u'•ÒW‘O',
+            font=(None,12)
+        )
+        task_edit_table_label.grid(column=4,row=5,pady=3,sticky=tk.W)
+        task_edit_table_label = tk.Label(
+            root,text=u'•ÒWŒã',
+            font=(None,12)
+        )
+        task_edit_table_label.grid(column=5,row=5,pady=3,sticky=tk.W)
+        list = []
+        for i in range(5):
+            edit_record_label_0 = tk.Label(
+                root,text=taskList_column[i],
+                font=(None,12)
+            )
+            edit_record_label_0.grid(column=3,row=6+i,pady=3,sticky=tk.W)
+            if i==1 or i==2:
+                edit_record_label_1_text = str(taskList[int(record_id)][i])
+            else :
+                edit_record_label_1_text = str(taskList[int(record_id)][i])
+            edit_record_label_1 = tk.Label(
+                    root,text=edit_record_label_1_text,
+                    font=(None,12)
+                )
+            edit_record_label_1.grid(column=4,row=6+i,pady=3,sticky=tk.W)
+            edit_record_textbox = tk.Entry(width=30)
+            edit_record_textbox.insert(tk.END,edit_record_label_1_text)
+            edit_record_textbox.grid(column=5,row=6+i,pady=3,sticky=tk.W)
+        def edit_finish_fanc():
+            taskList=[]
+        edit_finish_button = tk.Button(root,text=u'•ÒWŠ®—¹',command=edit_finish_fanc)
+        edit_finish_button.grid(column=3,row=11,pady=3,sticky=tk.W)
+                
+
+    # Treeview‚Ì¶¬
     taskList_tree = ttk.Treeview(root,columns=taskList_column)
-    # åˆ—ã®è¨­å®š
+    # —ñ‚Ì‘I‘ğ‚ÌŠÖ”‚Ì•R‚Ã‚¯
+    taskList_tree.bind("<<TreeviewSelect>>", select_record)
+    # —ñ‚Ìİ’è
     taskList_tree.column('#0',width=0,stretch='no')
     taskList_tree.column('ID',anchor='center',width=50)
-    taskList_tree.column(u'é–‹å§‹',anchor='center',width=50)
-    taskList_tree.column(u'çµ‚äº†',anchor='center',width=50)
-    taskList_tree.column(u'äºº',anchor='center',width=100)
-    taskList_tree.column(u'åå‰',anchor='w',width=200)
-    # åˆ—ã®è¦‹å‡ºã—è¨­å®š
+    taskList_tree.column(u'ŠJn',anchor='center',width=50)
+    taskList_tree.column(u'I—¹',anchor='center',width=50)
+    taskList_tree.column(u'l',anchor='center',width=100)
+    taskList_tree.column(u'–¼‘O',anchor='w',width=200)
+    # —ñ‚ÌŒ©o‚µİ’è
     taskList_tree.heading('#0',text='')
     taskList_tree.heading('ID',text='ID',anchor='center')
-    taskList_tree.heading(u'é–‹å§‹',text=u'é–‹å§‹',anchor='center')
-    taskList_tree.heading(u'çµ‚äº†',text=u'çµ‚äº†',anchor='center')
-    taskList_tree.heading(u'äºº',text=u'äºº',anchor='center')
-    taskList_tree.heading(u'åå‰',text=u'åå‰',anchor='center')
-    # ãƒ¬ã‚³ãƒ¼ãƒ‰ã®è¿½åŠ 
-    for i in range(8):
+    taskList_tree.heading(u'ŠJn',text=u'ŠJn',anchor='center')
+    taskList_tree.heading(u'I—¹',text=u'I—¹',anchor='center')
+    taskList_tree.heading(u'l',text=u'l',anchor='center')
+    taskList_tree.heading(u'–¼‘O',text=u'–¼‘O',anchor='center')
+    # ƒŒƒR[ƒh‚Ì’Ç‰Á
+    for i in range(len(taskList)):
         taskList_tree.insert(parent='',index='end',iid=i,values=(
             taskList[i][0],
             '{:02}:{:02}'.format(taskList[i][1].hour,taskList[i][1].minute),
@@ -116,17 +175,10 @@ def main():
             taskList[i][3],
             taskList[i][4]
         ))
-    # è¡¨ã®é…ç½®
-    taskList_tree.grid(column=1,row=5,padx=15,pady=10,sticky=tk.W,columnspan=3)
-
-    task_edit_title_label = tk.Label(
-        root,text=u'ã‚¿ã‚¹ã‚¯ç·¨é›†',
-        font=(None,16)
-    )
-    task_edit_title_label.grid(column=3,row=4,padx=15,pady=10,sticky=tk.W)
+    # •\‚Ì”z’u
+    taskList_tree.grid(column=1,row=5,padx=15,pady=10,sticky=tk.W,columnspan=3,rowspan=8)
     
-    edit_textbox = tk.Text(height=10,width=68)
-    edit_textbox.grid(column=3,row=5,padx=15,pady=10,sticky=tk.NW,rowspan=8)
+    #edit_textbox = tk.Text(height=10,width=68)
 
     thread = threading.Thread(target=get_time,daemon=True)
     thread.start()
