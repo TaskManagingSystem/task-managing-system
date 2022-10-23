@@ -1,0 +1,24 @@
+2022-10-23 22:25:57,706 file.manager INFO 2.0.0
+2022-10-23 22:25:57,706 file.manager INFO Copyright (C) 2003-2022, Noriaki Ando and OpenRTM development team,
+2022-10-23 22:25:57,706 file.manager INFO   Intelligent Systems Research Institute, AIST,
+2022-10-23 22:25:57,706 file.manager INFO Copyright (C) 2022, Noriaki Ando and OpenRTM development team,
+2022-10-23 22:25:57,706 file.manager INFO   Industrial Cyber-Physical Research Center, AIST,
+2022-10-23 22:25:57,706 file.manager INFO   All right reserved.
+2022-10-23 22:25:57,706 file.manager INFO Manager starting.
+2022-10-23 22:25:57,706 file.manager INFO Starting local logging.
+2022-10-23 22:25:58,009 file.manager.namingmanager INFO NameServer connection succeeded: corba/localhost
+2022-10-23 22:26:02,719 file.ManagerServant INFO Master manager not found
+2022-10-23 22:26:02,723 file.LocalServiceAdmin INFO All the local services are enabled.
+2022-10-23 22:26:02,783 file.manager INFO Component type conf file: id2signal.conf loaded.
+2022-10-23 22:26:02,787 file.ec_base INFO setRate(1000000.000000) done
+2022-10-23 22:26:02,787 file.ec_base INFO setRate(1000.000000) done
+2022-10-23 22:26:02,787 file.rtobject INFO 1 execution context was created.
+2022-10-23 22:26:02,791 file.rtobject INFO Initial active configuration set is default.
+2022-10-23 22:26:17,611 file.ManagerServant INFO Master manager not found
+2022-10-23 22:26:27,522 file.ManagerServant INFO Master manager not found
+2022-10-23 22:26:32,016 file.ec_worker ERROR State of the RTC is not INACTIVE_STATE.
+2022-10-23 22:26:37,706 file.ManagerServant INFO Master manager not found
+2022-10-23 22:26:43,695 file.ec_worker ERROR State of the RTC is not INACTIVE_STATE.
+2022-10-23 22:26:44,671 file.ec_worker ERROR State of the RTC is not INACTIVE_STATE.
+2022-10-23 22:26:45,585 file.ec_worker ERROR State of the RTC is not INACTIVE_STATE.
+2022-10-23 22:26:47,718 file.ManagerServant INFO Master manager not found
