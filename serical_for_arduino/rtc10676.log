@@ -1,0 +1,39 @@
+2022-10-31 00:16:52,041 file.manager INFO 2.0.0
+2022-10-31 00:16:52,042 file.manager INFO Copyright (C) 2003-2022, Noriaki Ando and OpenRTM development team,
+2022-10-31 00:16:52,042 file.manager INFO   Intelligent Systems Research Institute, AIST,
+2022-10-31 00:16:52,042 file.manager INFO Copyright (C) 2022, Noriaki Ando and OpenRTM development team,
+2022-10-31 00:16:52,043 file.manager INFO   Industrial Cyber-Physical Research Center, AIST,
+2022-10-31 00:16:52,043 file.manager INFO   All right reserved.
+2022-10-31 00:16:52,043 file.manager INFO Manager starting.
+2022-10-31 00:16:52,043 file.manager INFO Starting local logging.
+2022-10-31 00:16:52,057 file.manager.namingmanager INFO NameServer connection succeeded: corba/localhost
+2022-10-31 00:16:56,160 file.ManagerServant INFO Master manager not found
+2022-10-31 00:16:56,162 file.LocalServiceAdmin INFO All the local services are enabled.
+2022-10-31 00:16:56,169 file.manager INFO Component type conf file: serial_for_arduino.conf loaded.
+2022-10-31 00:16:56,172 file.ec_base INFO setRate(1000000.000000) done
+2022-10-31 00:16:56,172 file.ec_base INFO setRate(1000.000000) done
+2022-10-31 00:16:56,173 file.rtobject INFO 1 execution context was created.
+2022-10-31 00:16:56,177 file.rtobject INFO Initial active configuration set is default.
+2022-10-31 00:17:10,305 file.ManagerServant INFO Master manager not found
+2022-10-31 00:17:18,635 file.SdoServiceAdmin WARNING No available SDO service in the factory: 
+2022-10-31 00:17:18,636 file.SdoServiceAdmin ERROR type  not exists.
+2022-10-31 00:17:20,400 file.ManagerServant INFO Master manager not found
+2022-10-31 00:17:30,503 file.ManagerServant INFO Master manager not found
+2022-10-31 00:17:30,550 file.rtobject ERROR Traceback (most recent call last):
+  File "C:\Users\h-harufu\AppData\Local\Programs\Python\Python310\lib\site-packages\OpenRTM_aist\RTObject.py", line 1349, in on_activated
+    ret = self.onActivated(ec_id)
+  File "C:\Users\h-harufu\workspace\serical_for_arduino\serial_for_arduino.py", line 158, in onActivated
+    self.ser = serial.Serial('COM3',9600)
+NameError: name 'serial' is not defined
+
+2022-10-31 00:17:30,567 file.rtobject ERROR Traceback (most recent call last):
+  File "C:\Users\h-harufu\AppData\Local\Programs\Python\Python310\lib\site-packages\OpenRTM_aist\RTObject.py", line 1389, in on_deactivated
+    ret = self.onDeactivated(ec_id)
+  File "C:\Users\h-harufu\workspace\serical_for_arduino\serial_for_arduino.py", line 171, in onDeactivated
+    self.ser.close()
+AttributeError: 'serial_for_arduino' object has no attribute 'ser'
+
+2022-10-31 00:17:40,499 file.ManagerServant INFO Master manager not found
+2022-10-31 00:17:50,514 file.ManagerServant INFO Master manager not found
+2022-10-31 00:18:00,611 file.ManagerServant INFO Master manager not found
+2022-10-31 00:18:10,687 file.ManagerServant INFO Master manager not found
