@@ -1,0 +1,20 @@
+2022-10-31 00:13:58,174 file.manager INFO 2.0.0
+2022-10-31 00:13:58,174 file.manager INFO Copyright (C) 2003-2022, Noriaki Ando and OpenRTM development team,
+2022-10-31 00:13:58,174 file.manager INFO   Intelligent Systems Research Institute, AIST,
+2022-10-31 00:13:58,174 file.manager INFO Copyright (C) 2022, Noriaki Ando and OpenRTM development team,
+2022-10-31 00:13:58,175 file.manager INFO   Industrial Cyber-Physical Research Center, AIST,
+2022-10-31 00:13:58,175 file.manager INFO   All right reserved.
+2022-10-31 00:13:58,175 file.manager INFO Manager starting.
+2022-10-31 00:13:58,175 file.manager INFO Starting local logging.
+2022-10-31 00:13:58,187 file.manager.namingmanager INFO NameServer connection succeeded: corba/localhost
+2022-10-31 00:14:02,273 file.ManagerServant INFO Master manager not found
+2022-10-31 00:14:02,275 file.LocalServiceAdmin INFO All the local services are enabled.
+2022-10-31 00:14:02,281 file.manager INFO Component type conf file: serial_for_arduino.conf loaded.
+2022-10-31 00:14:02,284 file.ec_base INFO setRate(1000000.000000) done
+2022-10-31 00:14:02,284 file.ec_base INFO setRate(1000.000000) done
+2022-10-31 00:14:02,285 file.rtobject INFO 1 execution context was created.
+2022-10-31 00:14:02,289 file.rtobject INFO Initial active configuration set is default.
+2022-10-31 00:14:14,726 file.SdoServiceAdmin WARNING No available SDO service in the factory: 
+2022-10-31 00:14:14,726 file.SdoServiceAdmin ERROR type  not exists.
+2022-10-31 00:14:16,416 file.ManagerServant INFO Master manager not found
+2022-10-31 00:14:26,523 file.ManagerServant INFO Master manager not found
