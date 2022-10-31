@@ -1,0 +1,68 @@
+﻿version: '{build}'
+clone_folder: c:\workspace\display
+platform:
+- x64
+environment:
+  openrtm_version: 1.2.0
+  CTEST_OUTPUT_ON_FAILURE: 1
+  matrix:
+    - cmake_generator: Visual Studio 15 2017
+      cmake_archtecture: x64
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      python: 37-x64
+matrix:
+  fast_finish: true
+
+init:
+  - git config --global core.autocrlf false
+  - ps: $Env:APPVEYOR_BUILD_WORKER_IMAGE
+  - ps: $Env:cmake_generator
+  - ps: $Env:cmake_archtecture
+  - ps: |
+      switch ($Env:cmake_archtecture) {
+        "x64" { $arch = "x86_64" }
+        "x86" { $arch = "x86" }
+        "arm" { $arch = "arm" }
+        default {throw "invalid architecture."}
+      }
+      $openrtm = "OpenRTM-aist-${Env:openrtm_version}"
+      $openrtm_url = "https://github.com/OpenRTM/OpenRTM-aist/releases/download/v${Env:openrtm_version}/${openrtm}-RELEASE_${arch}.msi"
+      $Env:Path = "C:\Python${Env:python};c:\Python${Env:python}\scripts;${Env:Path}"
+  - ps: $Env:omni
+  - python --version
+
+before_build:
+  - ps: |
+      $Env:openrtm_path = "c:\openrtm\${openrtm}_${Env:cmake_archtecture}"
+      if(-NOT (Test-Path "${Env:openrtm_path}\OpenRTM-aist")){
+        New-Item "${Env:openrtm_path}" -ItemType Directory
+        [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Tls12;
+        Invoke-WebRequest -Uri $openrtm_url -OutFile "${Env:TEMP}\${openrtm}.msi"
+        $arg = "/a `"${Env:TEMP}\${openrtm}.msi`" targetdir=${Env:openrtm_path} /qn  /li `"c:\openrtm\install.log`""
+        $msi = Start-Process msiexec.exe -ArgumentList $arg -PassThru
+        Wait-Process -Id ($msi.id)
+      }
+  - set PYTHONPATH=%openrtm_path%\Lib\site-packages;%openrtm_path%\Lib\site-packages\OpenRTM_aist;%PYTHONPATH%
+  - set PATH=%openrtm_path%\Lib\site-packages;%openrtm_path%;%PATH%
+  - copy %openrtm_path%\omniidl.exe C:\Python%python%\
+  - cmake --version
+  - echo cmake -DBUILD_TESTS=ON -DOpenRTM_DIR=%openrtm_path%/OpenRTM-aist/%openrtm_version%/cmake -G "%cmake_generator%" -A "%cmake_archtecture%" -S . -B../build
+  - cmake -DBUILD_TESTS=ON -DOpenRTM_DIR=%openrtm_path%/OpenRTM-aist/%openrtm_version%/cmake -G "%cmake_generator%" -A "%cmake_archtecture%" -S . -B../build
+
+build_script:
+  - echo cmake --build ../build --target ALL_BUILD --config Release	
+  - cmake --build ../build --target ALL_BUILD --config Release
+  - echo cmake --build ../build --target RUN_TESTS --config Release
+  - cmake --build ../build --target RUN_TESTS --config Release
+
+
+cache:
+  - C:/openrtm -> .appveyor.yml
+
+only_commits:
+  files:
+    - .appveyor.yml
+    - CMakeLists.txt
+    - display.py
+    - src/
+    - test/

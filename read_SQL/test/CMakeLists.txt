@@ -1,0 +1,7 @@
+add_test(NAME ${PROJECT_NAME}_test COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}Test.py -o "manager.components.precreate:${PROJECT_NAME}" -o "manager.components.preconnect:${PROJECT_NAME}0.task_task_id?port=${PROJECT_NAME}Test0.task_task_id,${PROJECT_NAME}0.latest_task?port=${PROJECT_NAME}Test0.latest_task,${PROJECT_NAME}0.task_start_time?port=${PROJECT_NAME}Test0.task_start_time,${PROJECT_NAME}0.task_finish_time?port=${PROJECT_NAME}Test0.task_finish_time,${PROJECT_NAME}0.task_target?port=${PROJECT_NAME}Test0.task_target,${PROJECT_NAME}0.task_status?port=${PROJECT_NAME}Test0.task_status,${PROJECT_NAME}0.task_title?port=${PROJECT_NAME}Test0.task_title,${PROJECT_NAME}0.task_explanation?port=${PROJECT_NAME}Test0.task_explanation" -o "manager.components.preactivation:${PROJECT_NAME}0,${PROJECT_NAME}Test0" WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+string(REPLACE ";" "\\;" PYTHONPATH "$ENV{PYTHONPATH}")
+if(UNIX)
+  set_tests_properties(${PROJECT_NAME}_test PROPERTIES ENVIRONMENT "PYTHONPATH=${CMAKE_SOURCE_DIR}:${PYTHONPATH}")
+else()
+  set_tests_properties(${PROJECT_NAME}_test PROPERTIES ENVIRONMENT "PYTHONPATH=${CMAKE_SOURCE_DIR}\;${PYTHONPATH}")
+endif()

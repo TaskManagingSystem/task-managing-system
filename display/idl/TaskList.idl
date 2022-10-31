@@ -1,0 +1,14 @@
+// @file TaskList.idl
+#include "BasicDataType.idl"
+
+struct TaskList
+{
+  RTC::Time tm;
+  long task_id;
+  char start_time;
+  char finish_time;
+  long target;
+  boolean status;
+  char title;
+  char discription;
+};

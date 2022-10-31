@@ -1,0 +1,5 @@
+﻿#!/bin/sh
+# postinst script
+set -e
+cd /usr/@INSTALL_PREFIX@
+sh idlcompile.sh

@@ -1,0 +1,21 @@
+﻿<CPackWiXPatch>
+  <CPackWiXFragment Id="#PRODUCT">
+    <CustomAction Id="PostinstAction" Directory="CM_DP_component.@PROJECT_NAME@"
+      ExeCommand='cmd.exe /c omniidl.exe -bpython -I"%RTM_ROOT%\rtm\idl" idl/TaskList.idl idl/TaskListSeq.idl '
+
+      Execute="deferred" Impersonate="no"/>
+    <CustomAction Id="PrermAction" Directory="CM_DP_component.@PROJECT_NAME@"
+      ExeCommand='cmd.exe /k "del /s/q *.py* &amp; (for /d %i in (*.*) do rmdir /s/q %i) &amp; exit"'
+      Execute="deferred" Impersonate="no"/>
+    <InstallExecuteSequence>
+      <Custom Action="PostinstAction" Before="InstallFinalize">
+        NOT Installed
+      </Custom>
+    </InstallExecuteSequence>
+    <InstallExecuteSequence>
+      <Custom Action="PrermAction" Before="RemoveFiles">
+        Installed
+      </Custom>
+    </InstallExecuteSequence>
+  </CPackWiXFragment>
+</CPackWiXPatch>
