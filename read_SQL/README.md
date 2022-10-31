@@ -22,7 +22,7 @@ ModuleDescription
 ----|---- 
 | Module Name | read_SQL |
 | Description | ModuleDescription |
-| Version | 1.0.0 |
+| Version | 1.1.0 |
 | Vendor | Tsukasa Takahashi |
 | Category | Category |
 | Comp. Type | STATIC |
@@ -215,7 +215,7 @@ ModuleDescription
 <table>
   <tr>
     <td>DataType</td>
-    <td>RTC::TimedLongSeq</td>
+    <td>RTC::TimedStringSeq</td>
     <td></td>
   </tr>
   <tr>
@@ -251,7 +251,7 @@ ModuleDescription
 <table>
   <tr>
     <td>DataType</td>
-    <td>RTC::TimedLongSeq</td>
+    <td>RTC::TimedStringSeq</td>
     <td></td>
   </tr>
   <tr>

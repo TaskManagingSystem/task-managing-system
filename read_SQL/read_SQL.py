@@ -38,7 +38,7 @@ import OpenRTM_aist
 read_sql_spec = ["implementation_id", "read_SQL", 
          "type_name",         "read_SQL", 
          "description",       "ModuleDescription", 
-         "version",           "1.0.0", 
+         "version",           "1.1.0", 
          "vendor",            "Tsukasa Takahashi", 
          "category",          "Category", 
          "activity_type",     "STATIC", 
@@ -78,11 +78,11 @@ class read_SQL(OpenRTM_aist.DataFlowComponentBase):
         """
         """
         self._latest_taskOut = OpenRTM_aist.OutPort("latest_task", self._d_latest_task)
-        self._d_task_start_time = OpenRTM_aist.instantiateDataType(RTC.TimedLongSeq)
+        self._d_task_start_time = OpenRTM_aist.instantiateDataType(RTC.TimedStringSeq)
         """
         """
         self._task_start_timeOut = OpenRTM_aist.OutPort("task_start_time", self._d_task_start_time)
-        self._d_task_finish_time = OpenRTM_aist.instantiateDataType(RTC.TimedLongSeq)
+        self._d_task_finish_time = OpenRTM_aist.instantiateDataType(RTC.TimedStringSeq)
         """
         """
         self._task_finish_timeOut = OpenRTM_aist.OutPort("task_finish_time", self._d_task_finish_time)
@@ -199,7 +199,7 @@ class read_SQL(OpenRTM_aist.DataFlowComponentBase):
     #
     #
     def onActivated(self, ec_id):
-    
+        
         # connect task database
         db = self._database_path[0]
         global conn
@@ -209,7 +209,6 @@ class read_SQL(OpenRTM_aist.DataFlowComponentBase):
 
         # create table
         cur.execute('CREATE TABLE IF NOT EXISTS task(id integer primary key autoincrement, start_time text, finish_time text, target text, status integer, title text, discription text)')
-    
         return RTC.RTC_OK
 	
     ##
@@ -222,11 +221,11 @@ class read_SQL(OpenRTM_aist.DataFlowComponentBase):
     #
     #
     def onDeactivated(self, ec_id):
-        
+    
         # disconnect the task database
         cur.close()
         conn.close()
- 
+
         return RTC.RTC_OK
 	
     ##
@@ -239,7 +238,7 @@ class read_SQL(OpenRTM_aist.DataFlowComponentBase):
     #
     #
     def onExecute(self, ec_id):
-    
+
         # get data from database
         cur.execute('SELECT * FROM task')
         task_list = cur.fetchall()

@@ -39,7 +39,7 @@ import read_SQL
 read_sqltest_spec = ["implementation_id", "read_SQLTest", 
          "type_name",         "read_SQLTest", 
          "description",       "ModuleDescription", 
-         "version",           "1.0.0", 
+         "version",           "1.1.0", 
          "vendor",            "Tsukasa Takahashi", 
          "category",          "Category", 
          "activity_type",     "STATIC", 
@@ -79,11 +79,11 @@ class read_SQLTest(OpenRTM_aist.DataFlowComponentBase):
         """
         """
         self._latest_taskIn = OpenRTM_aist.InPort("latest_task", self._d_latest_task)
-        self._d_task_start_time = OpenRTM_aist.instantiateDataType(RTC.TimedLongSeq)
+        self._d_task_start_time = OpenRTM_aist.instantiateDataType(RTC.TimedStringSeq)
         """
         """
         self._task_start_timeIn = OpenRTM_aist.InPort("task_start_time", self._d_task_start_time)
-        self._d_task_finish_time = OpenRTM_aist.instantiateDataType(RTC.TimedLongSeq)
+        self._d_task_finish_time = OpenRTM_aist.instantiateDataType(RTC.TimedStringSeq)
         """
         """
         self._task_finish_timeIn = OpenRTM_aist.InPort("task_finish_time", self._d_task_finish_time)
