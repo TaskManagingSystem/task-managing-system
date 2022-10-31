@@ -14,6 +14,7 @@
 
 import sys
 import time
+from datetime import datetime
 sys.path.append(".")
 
 # Import RTM module
@@ -37,13 +38,13 @@ id2signal_spec = ["implementation_id", "id2signal",
          "type_name",         "id2signal", 
          "description",       "ChangeIdIntoSignal", 
          "version",           "1.0.0", 
-         "vendor",            "HarutoFuruyama", 
-         "category",          "Converter", 
+         "vendor",            "Haruto Furuyama", 
+         "category",          "Category", 
          "activity_type",     "STATIC", 
          "max_instance",      "1", 
          "language",          "Python", 
          "lang_type",         "SCRIPT",
-         "conf.default.machine_id", "0",
+         "conf.default.machine_id", "'0'",
 
          "conf.__widget__.machine_id", "text",
 
@@ -68,7 +69,7 @@ class id2signal(OpenRTM_aist.DataFlowComponentBase):
     def __init__(self, manager):
         OpenRTM_aist.DataFlowComponentBase.__init__(self, manager)
 
-        self._d_latest_task = OpenRTM_aist.instantiateDataType(RTC.TimedString)
+        self._d_latest_task = OpenRTM_aist.instantiateDataType(RTC.TimedStringSeq)
         """
         """
         self._latest_taskIn = OpenRTM_aist.InPort("latest_task", self._d_latest_task)
@@ -86,7 +87,7 @@ class id2signal(OpenRTM_aist.DataFlowComponentBase):
         """
         
          - Name:  machine_id
-         - DefaultValue: 0
+         - DefaultValue: '0'
         """
         self._machine_id = ['0']
 		
@@ -103,7 +104,7 @@ class id2signal(OpenRTM_aist.DataFlowComponentBase):
     #
     def onInitialize(self):
         # Bind variables and configuration variable
-        self.bindParameter("machine_id", self._machine_id, "0")
+        self.bindParameter("machine_id", self._machine_id, "'0'")
 		
         # Set InPort buffers
         self.addInPort("latest_task",self._latest_taskIn)

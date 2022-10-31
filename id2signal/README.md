@@ -23,8 +23,8 @@ ChangeIdIntoSignal
 | Module Name | id2signal |
 | Description | ChangeIdIntoSignal |
 | Version | 1.0.0 |
-| Vendor | HarutoFuruyama |
-| Category | Converter |
+| Vendor | Haruto Furuyama |
+| Category | Category |
 | Comp. Type | STATIC |
 | Act. Type | PERIODIC |
 | Kind | DataFlowComponent |
@@ -140,7 +140,7 @@ ChangeIdIntoSignal
 <table>
   <tr>
     <td>DataType</td>
-    <td>RTC::TimedString</td>
+    <td>RTC::TimedStringSeq</td>
     <td></td>
   </tr>
   <tr>
@@ -226,7 +226,7 @@ ChangeIdIntoSignal
   </tr>
   <tr>
     <td>DefaultValue</td>
-    <td>0</td>
+    <td>'0'</td>
     <td></td>
   </tr>
   <tr>
