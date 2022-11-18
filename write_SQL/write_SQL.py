@@ -215,29 +215,26 @@ class write_SQL(OpenRTM_aist.DataFlowComponentBase):
     #
     def onExecute(self, ec_id):
 
-        # get data from database
-        cur.execute('SELECT * FROM task')
-        task_list = cur.fetchall()
-        print(task_list)
-
-        # for test
-        vector = ["0", "2022-10-20 15:45", "2022-10-20 15:50", "ore", "0", "taitoru", "setumei"]
-
         # insert task data into the database table
         if self._add_taskIn.isNew():
-            self._add_taskIn.read()
+            add_task = self._add_taskIn.read().data
 
             # insert SQL statement
-            cur.execute("insert into values(, " + self._d_add_task[1] + ", " + self._d_add_task[2] + "," + self._d_add_task[3] + "," + int(self._d_add_task[4]) + "," + self._d_add_task[5] + ", " + self._d_add_task[6] + ")")
+            cur.execute("insert into values(null, " + add_task[1] + ", " + add_task[2] + "," + add_task[3] + "," + int(add_task[4]) + "," + add_task[5] + ", " + add_task[6] + ")")
 
-            cur.execute("insert into values(, " + vector[1] + ", " + vector[2] + "," + vector[3] + "," + int(vector[4]) + "," + vector[5] + ", " + vector[6] + ")")
 
         # change data "status" value from False "0" to True "1"
         if self._complete_task_idIn.isNew():
-            self._complete_task_idIn.read()
+            complete_task_id = self._complete_task_idIn.read().data
 
             # SQL statuement
-            cur.execute('UPDATE task SET status = 1 where id =' + self._d_complete_task_id)
+            cur.execute('UPDATE task SET status = 1 where id =' + complete_task_id)
+
+        
+        if self._change_taskIn.isNew():
+            change_task = self._change_taskIn.read().data
+
+
     
         return RTC.RTC_OK
 	

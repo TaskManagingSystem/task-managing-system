@@ -349,11 +349,12 @@ class display(OpenRTM_aist.DataFlowComponentBase):
         description = '説明'
         if self._latest_taskIn.isNew():
             self.latest_task = self._latest_taskIn.read().data
-            start_time = datetime.strptime(self.latest_task[1],'%Y-%m-%d %H:%M:%S')
-            finish_time = datetime.strptime(self.latest_task[2],'%Y-%m-%d %H:%M:%S')
-            task_name = self.latest_task[4]
-            person_name = self.latest_task[3]
-            description = self.latest_task[5]
+            if len(self.latest_task) != 0:
+                start_time = datetime.strptime(self.latest_task[1],'%Y-%m-%d %H:%M:%S')
+                finish_time = datetime.strptime(self.latest_task[2],'%Y-%m-%d %H:%M:%S')
+                task_name = self.latest_task[4]
+                person_name = self.latest_task[3]
+                description = self.latest_task[5]
 
         # 最新のタスクの開始・終了時刻を表示する
         time_label = tk.Label(

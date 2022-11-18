@@ -201,14 +201,20 @@ class read_SQL(OpenRTM_aist.DataFlowComponentBase):
     def onActivated(self, ec_id):
         
         # connect task database
-        db = self._database_path[0]
+        global db
         global conn
         global cur
+        db = self._database_path[0]
         conn = sqlite3.connect(db)
         cur = conn.cursor()
 
         # create table
         cur.execute('CREATE TABLE IF NOT EXISTS task(id integer primary key autoincrement, start_time text, finish_time text, target text, status integer, title text, discription text)')
+
+        # disconnect the task database
+        # cur.close()
+        # conn.close()
+
         return RTC.RTC_OK
 	
     ##
@@ -238,20 +244,51 @@ class read_SQL(OpenRTM_aist.DataFlowComponentBase):
     #
     #
     def onExecute(self, ec_id):
-
-        # get data from database
-        cur.execute('SELECT * FROM task')
-        task_list = cur.fetchall()
-        print(task_list)
+        # connect task database
+        # conn = sqlite3.connect(db)
+        # cur = conn.cursor()
 
 
         # latest task data
-        self._d_latest_task = task_list[0]
-        self._latest_taskOut.write()
+        cur.execute('SELECT * FROM task ORDER BY start_time asc;')
+        task_list = cur.fetchall()
+        if len(task_list) != 0:
+            self._d_latest_task.data = task_list[0]
+            self._latest_taskOut.write()
 
 
         # all task data
+        # get data from database
+        cur.execute('SELECT * FROM task;')
+        task_list = cur.fetchall()
+
+        for i in range(len(task_list)):
+            self._d_task_list.data = int(task_list[i][0])
+            self._task_task_idOut.write()
+            self._d_task_start_time.data = task_list[i][1]
+            self._task_start_timeOut.write()
+            self._d_task_finish_time.data = task_list[i][2]
+            self._task_finish_timeOut.write()
+            self._d_task_target.data = task_list[i][2]
+            self._task_targetOut.write()
+
+            # SQLiteのstring型をboolean型に変換
+            if task_list[i][3] == 1:
+                self._d_task_status.data = True
+            elif task_list[i][4] == 0:
+                self._d_task_status.data == False
+            self._task_statusOut.write()
+
+            self._d_task_title.data = task_list[i][5]
+            self._task_titleOut.write()
+            self._d_task_target.data = task_list[i][6]
+            self._task_targetOut.write()
+
     
+        # disconnect the task database
+        # cur.close()
+        # conn.close()
+
         return RTC.RTC_OK
 	
     ###
