@@ -17,6 +17,7 @@ import time
 import tkinter as tk
 from tkinter import ttk
 from datetime import datetime
+from distutils.util import strtobool
 sys.path.append(".")
 
 # Import RTM module
@@ -106,6 +107,11 @@ class display(OpenRTM_aist.DataFlowComponentBase):
         """
         self._complete_task_idOut = OpenRTM_aist.OutPort("complete_task_id", self._d_complete_task_id)
 
+        self.root = tk.Tk()
+        self.clock = tk.Canvas()
+        self.edit_record_textboxes = []
+        self.taskList_tree = ttk.Treeview()
+
     def select_record(self,event):
         taskList_column = ('ID','開始','終了','人','名前')
         record_id = self.taskList_tree.focus()
@@ -129,6 +135,7 @@ class display(OpenRTM_aist.DataFlowComponentBase):
             font=(None,12)
         )
         task_edit_table_label.grid(column=5,row=5,pady=3,sticky=tk.W)
+
         for i in range(5):
             edit_record_label_0 = tk.Label(
                 self.root,text=taskList_column[i],
@@ -136,25 +143,31 @@ class display(OpenRTM_aist.DataFlowComponentBase):
             )
             edit_record_label_0.grid(column=3,row=6+i,pady=3,sticky=tk.W)
             values = [""] * 5
-            if i==1 or i==2:
-                edit_record_label_1_text = self.taskList_tree.item(record_id, 'values')[i]
-            else :
-                edit_record_label_1_text = self.taskList_tree.item(record_id, 'values')[i]
+
+            print(self.taskList_tree.item(record_id, 'values'))
+            print(i)
+            edit_record_label_1_text = self.taskList_tree.item(record_id, 'values')[i]
             edit_record_label_1 = tk.Label(
                     self.root,text=edit_record_label_1_text,
                     font=(None,12)
                 )
             edit_record_label_1.grid(column=4,row=6+i,pady=3,sticky=tk.W)
-            edit_record_textbox = tk.Entry(width=30)
-            edit_record_textbox.insert(tk.END,edit_record_label_1_text)
-            edit_record_textbox.grid(column=5,row=6+i,pady=3,sticky=tk.W)
-
-        # 編集完了ボタン押下時の処理
-        def edit_finish_fanc():
-            self.taskList_edited=[]
+            self.edit_record_textboxes.append(tk.Entry(width=30))
+            self.edit_record_textboxes[i].delete()
+            self.edit_record_textboxes[i].insert(tk.END,edit_record_label_1_text)
+            self.edit_record_textboxes[i].grid(column=5,row=6+i,pady=3,sticky=tk.W)
             
-        edit_finish_button = tk.Button(self.root,text='編集完了',command=edit_finish_fanc)
+        edit_finish_button = tk.Button(self.root,text='編集完了',command=self.edit_finish_fanc)
         edit_finish_button.grid(column=3,row=11,pady=3,sticky=tk.W)
+
+    # 編集完了ボタン押下時の処理
+    def edit_finish_fanc(self):
+        taskList_edited=[]
+        for i in range(5):
+            taskList_edited.append(self.edit_record_textboxes[i].get())
+        self._d_change_task.data = taskList_edited
+        self._change_taskOut.write()
+        print(taskList_edited)
 		
 
 
@@ -282,7 +295,7 @@ class display(OpenRTM_aist.DataFlowComponentBase):
 
         # 全てのタスクの表の作成
         # 列の識別名の指定
-        taskList_column = ('ID','開始','終了','実行者','タイトル')
+        taskList_column = ('ID','開始','終了','実行者','ステータス','タイトル','説明')
 
         # Treeviewの生成
         self.taskList_tree = ttk.Treeview(self.root,columns=taskList_column)
@@ -292,18 +305,22 @@ class display(OpenRTM_aist.DataFlowComponentBase):
 
         # 列の設定
         self.taskList_tree.column('#0',width=0,stretch='no')
-        self.taskList_tree.column('ID',anchor='center',width=50)
-        self.taskList_tree.column('開始',anchor='center',width=50)
-        self.taskList_tree.column('終了',anchor='center',width=50)
-        self.taskList_tree.column('実行者',anchor='center',width=100)
-        self.taskList_tree.column('タイトル',anchor='w',width=200)
+        self.taskList_tree.column('ID',anchor='center',width=30)
+        self.taskList_tree.column('開始',anchor='center',width=35)
+        self.taskList_tree.column('終了',anchor='center',width=35)
+        self.taskList_tree.column('実行者',anchor='center',width=75)
+        self.taskList_tree.column('ステータス',anchor='center',width=40)
+        self.taskList_tree.column('タイトル',anchor='w',width=130)
+        self.taskList_tree.column('説明',anchor='w',width=130)
         # 列の見出し設定
         self.taskList_tree.heading('#0',text='')
         self.taskList_tree.heading('ID',text='ID',anchor='center')
         self.taskList_tree.heading('開始',text='開始',anchor='center')
         self.taskList_tree.heading('終了',text='終了',anchor='center')
         self.taskList_tree.heading('実行者',text='実行者',anchor='center')
+        self.taskList_tree.heading('ステータス',text='ステータス',anchor='center')
         self.taskList_tree.heading('タイトル',text='タイトル',anchor='center')
+        self.taskList_tree.heading('説明',text='説明',anchor='center')
 
         self.taskList_tree.grid(column=1,row=5,padx=15,pady=10,sticky=tk.W,columnspan=3,rowspan=8)
 
@@ -342,19 +359,28 @@ class display(OpenRTM_aist.DataFlowComponentBase):
         self.clock.create_text(250,50,text=now_str,font=(None,36))
 
         # 最新のタスクを取得する
-        start_time = datetime(2022,10,24,21,10,0)
-        finish_time = datetime(2022,10,24,22,10,0)
+        self.latest_task=['123','2022-11-17 7:18:0','2022-11-18 23:59:59','person','False','title','description']
+        start_time = datetime(2022,11,17,7,18,0)
+        finish_time = datetime(2022,11,18,23,59,59)
         task_name = 'タスク名'
         person_name = '人'
         description = '説明'
         if self._latest_taskIn.isNew():
             self.latest_task = self._latest_taskIn.read().data
-            if len(self.latest_task) != 0:
+            try:
+                if strtobool(self.latest_task[4]) == 0:
+                    start_time = datetime.strptime(self.latest_task[1],'%Y-%m-%d %H:%M:%S')
+                    finish_time = datetime.strptime(self.latest_task[2],'%Y-%m-%d %H:%M:%S')
+                    task_name = self.latest_task[4]
+                    person_name = self.latest_task[3]
+                    description = self.latest_task[5]
+            except:
+                self.latest_task=['123','2022-11-17 7:18:0','2022-11-18 23:59:59','person','False','title','description']
                 start_time = datetime.strptime(self.latest_task[1],'%Y-%m-%d %H:%M:%S')
                 finish_time = datetime.strptime(self.latest_task[2],'%Y-%m-%d %H:%M:%S')
-                task_name = self.latest_task[4]
+                task_name = self.latest_task[5]
                 person_name = self.latest_task[3]
-                description = self.latest_task[5]
+                description = self.latest_task[6]
 
         # 最新のタスクの開始・終了時刻を表示する
         time_label = tk.Label(
@@ -397,8 +423,8 @@ class display(OpenRTM_aist.DataFlowComponentBase):
         # 全てのタスクのデータを取得する
         task_list = [
             ['id'],
-            ['start_time'],
-            ['finish_time'],
+            ['2020-8-12 6:45:0'],
+            ['2021-1-13 7:40:0'],
             ['target'],
             ['status'],
             ['title'],
@@ -428,14 +454,17 @@ class display(OpenRTM_aist.DataFlowComponentBase):
         #     ))
 
         # TODO TODO TODO 仮 TODO TODO TODO
-        taskList = [['10C7',datetime(2022,10,17,10,0,0),datetime(2022,10,17,10,20,0),'人1','タスク1']]
-        for i in range(len(taskList)):
+        # taskList = [['10C7',datetime(2022,10,17,10,0,0),datetime(2022,10,17,10,20,0),'人1','タスク1']]
+        
+        for i in range(min([len(task_list[j]) for j in range(7)])):
             self.taskList_tree.insert(parent='',index='end',iid=i,values=(
-            taskList[i][0],
-            '{:02}:{:02}'.format(taskList[i][1].hour,taskList[i][1].minute),
-            '{:02}:{:02}'.format(taskList[i][2].hour,taskList[i][2].minute),
-            taskList[i][3],
-            taskList[i][4]
+            task_list[0][i],
+            '{:02}:{:02}'.format(datetime.strptime(task_list[1][i],'%Y-%m-%d %H:%M:%S').hour, datetime.strptime(task_list[1][i],'%Y-%m-%d %H:%M:%S').minute),
+            '{:02}:{:02}'.format(datetime.strptime(task_list[2][i],'%Y-%m-%d %H:%M:%S').hour, datetime.strptime(task_list[2][i],'%Y-%m-%d %H:%M:%S').minute),
+            task_list[3][i],
+            task_list[4][i],
+            task_list[5][i],
+            task_list[6][i]
         ))
 
 
