@@ -1,2 +1,6 @@
 tasklist.db
+
 *.log
+.metadata
+
+.vs
