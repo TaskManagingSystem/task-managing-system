@@ -22,7 +22,7 @@ SerialCommunicationWithArduino.
 ----|---- 
 | Module Name | serial_for_arduino |
 | Description | SerialCommunicationWithArduino. |
-| Version | 1.1.0 |
+| Version | 1.1.1 |
 | Vendor | HarutoFuruyama |
 | Category | Category |
 | Comp. Type | STATIC |

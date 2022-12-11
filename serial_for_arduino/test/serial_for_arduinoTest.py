@@ -4,7 +4,7 @@
 
 # <rtc-template block="description">
 """
- @file serial_for_arduino.py
+ @file serial_for_arduinoTest.py
  @brief SerialCommunicationWithArduino.
  @date $Date$
 
@@ -12,9 +12,9 @@
 """
 # </rtc-template>
 
+from __future__ import print_function
 import sys
 import time
-import serial
 sys.path.append(".")
 
 # Import RTM module
@@ -25,6 +25,8 @@ import OpenRTM_aist
 # Import Service implementation class
 # <rtc-template block="service_impl">
 
+import serial_for_arduino
+
 # </rtc-template>
 
 # Import Service stub modules
@@ -34,10 +36,10 @@ import OpenRTM_aist
 
 # This module's spesification
 # <rtc-template block="module_spec">
-serial_for_arduino_spec = ["implementation_id", "serial_for_arduino", 
-         "type_name",         "serial_for_arduino", 
+serial_for_arduinotest_spec = ["implementation_id", "serial_for_arduinoTest", 
+         "type_name",         "serial_for_arduinoTest", 
          "description",       "SerialCommunicationWithArduino.", 
-         "version",           "1.1.0", 
+         "version",           "1.1.1", 
          "vendor",            "HarutoFuruyama", 
          "category",          "Category", 
          "activity_type",     "STATIC", 
@@ -55,13 +57,13 @@ serial_for_arduino_spec = ["implementation_id", "serial_for_arduino",
 
 # <rtc-template block="component_description">
 ##
-# @class serial_for_arduino
+# @class serial_for_arduinoTest
 # @brief SerialCommunicationWithArduino.
 # 
 # 
 # </rtc-template>
-class serial_for_arduino(OpenRTM_aist.DataFlowComponentBase):
-	
+class serial_for_arduinoTest(OpenRTM_aist.DataFlowComponentBase):
+    
     ##
     # @brief constructor
     # @param manager Maneger Object
@@ -69,17 +71,17 @@ class serial_for_arduino(OpenRTM_aist.DataFlowComponentBase):
     def __init__(self, manager):
         OpenRTM_aist.DataFlowComponentBase.__init__(self, manager)
 
-        self._d_LCD_strings = OpenRTM_aist.instantiateDataType(RTC.TimedString)
-        """
-        """
-        self._LCD_stringsIn = OpenRTM_aist.InPort("LCD_strings", self._d_LCD_strings)
         self._d_button_result = OpenRTM_aist.instantiateDataType(RTC.TimedLong)
         """
         """
-        self._button_resultOut = OpenRTM_aist.OutPort("button_result", self._d_button_result)
+        self._button_resultIn = OpenRTM_aist.InPort("button_result", self._d_button_result)
+        self._d_LCD_strings = OpenRTM_aist.instantiateDataType(RTC.TimedString)
+        """
+        """
+        self._LCD_stringsOut = OpenRTM_aist.OutPort("LCD_strings", self._d_LCD_strings)
 
 
-		
+        
 
 
         # initialize of configuration-data.
@@ -90,11 +92,11 @@ class serial_for_arduino(OpenRTM_aist.DataFlowComponentBase):
          - DefaultValue: COM3
         """
         self._com_port = ['COM3']
-		
+        
         # </rtc-template>
 
 
-		 
+         
     ##
     #
     # The initialize action (on CREATED->ALIVE transition)
@@ -104,21 +106,22 @@ class serial_for_arduino(OpenRTM_aist.DataFlowComponentBase):
     #
     def onInitialize(self):
         # Bind variables and configuration variable
-		
+        self.bindParameter("com_port", self._com_port, "COM3")
+        
         # Set InPort buffers
-        self.addInPort("LCD_strings",self._LCD_stringsIn)
-		
+        self.addInPort("button_result",self._button_resultIn)
+        
         # Set OutPort buffers
-        self.addOutPort("button_result",self._button_resultOut)
-		
+        self.addOutPort("LCD_strings",self._LCD_stringsOut)
+        
         # Set service provider to Ports
-		
+        
         # Set service consumers to Ports
-		
+        
         # Set CORBA Service Ports
-		
+        
         return RTC.RTC_OK
-	
+    
     ###
     ## 
     ## The finalize action (on ALIVE->END transition)
@@ -128,10 +131,9 @@ class serial_for_arduino(OpenRTM_aist.DataFlowComponentBase):
     ## 
     #def onFinalize(self):
     #
-
     #    return RTC.RTC_OK
-	
-    ###
+    
+    #    ##
     ##
     ## The startup action when ExecutionContext startup
     ## 
@@ -143,7 +145,7 @@ class serial_for_arduino(OpenRTM_aist.DataFlowComponentBase):
     #def onStartup(self, ec_id):
     #
     #    return RTC.RTC_OK
-	
+    
     ###
     ##
     ## The shutdown action when ExecutionContext stop
@@ -156,7 +158,7 @@ class serial_for_arduino(OpenRTM_aist.DataFlowComponentBase):
     #def onShutdown(self, ec_id):
     #
     #    return RTC.RTC_OK
-	
+    
     ##
     #
     # The activated action (Active state entry action)
@@ -167,11 +169,10 @@ class serial_for_arduino(OpenRTM_aist.DataFlowComponentBase):
     #
     #
     def onActivated(self, ec_id):
-        print('Activated')
-        self.ser = serial.Serial(self._com_port[0],9600)
+    
         return RTC.RTC_OK
-	
-    ##
+    
+        ##
     #
     # The deactivated action (Active state exit action)
     #
@@ -181,10 +182,9 @@ class serial_for_arduino(OpenRTM_aist.DataFlowComponentBase):
     #
     #
     def onDeactivated(self, ec_id):
-        self.ser.close()
-        print('Deactivated')
+    
         return RTC.RTC_OK
-	
+    
     ##
     #
     # The execution action that is invoked periodically
@@ -195,15 +195,9 @@ class serial_for_arduino(OpenRTM_aist.DataFlowComponentBase):
     #
     #
     def onExecute(self, ec_id):
-        if self._LCD_stringsIn.isNew():
-            LCD_strings = self._LCD_stringsIn.read().data
-            self.ser.write(LCD_strings+'.')
-        if self.ser.read_all() == b'1':
-            self._d_button_result.data = 1
-            self._button_resultOut.write()
-            print('button_on')
+    
         return RTC.RTC_OK
-	
+    
     ###
     ##
     ## The aborting action when main logic error occurred.
@@ -211,12 +205,12 @@ class serial_for_arduino(OpenRTM_aist.DataFlowComponentBase):
     ## @param ec_id target ExecutionContext Id
     ##
     ## @return RTC::ReturnCode_t
-    ##
+    #    #
     ##
     #def onAborting(self, ec_id):
     #
     #    return RTC.RTC_OK
-	
+    
     ###
     ##
     ## The error action in ERROR state
@@ -229,7 +223,7 @@ class serial_for_arduino(OpenRTM_aist.DataFlowComponentBase):
     #def onError(self, ec_id):
     #
     #    return RTC.RTC_OK
-	
+    
     ###
     ##
     ## The reset action that is invoked resetting
@@ -242,7 +236,7 @@ class serial_for_arduino(OpenRTM_aist.DataFlowComponentBase):
     #def onReset(self, ec_id):
     #
     #    return RTC.RTC_OK
-	
+    
     ###
     ##
     ## The state update action that is invoked after onExecute() action
@@ -256,7 +250,7 @@ class serial_for_arduino(OpenRTM_aist.DataFlowComponentBase):
     #def onStateUpdate(self, ec_id):
     #
     #    return RTC.RTC_OK
-	
+    
     ###
     ##
     ## The action that is invoked when execution context's rate is changed
@@ -269,37 +263,44 @@ class serial_for_arduino(OpenRTM_aist.DataFlowComponentBase):
     #def onRateChanged(self, ec_id):
     #
     #    return RTC.RTC_OK
-	
+    
+    def runTest(self):
+        return True
 
+def RunTest():
+    manager = OpenRTM_aist.Manager.instance()
+    comp = manager.getComponent("serial_for_arduinoTest0")
+    if comp is None:
+        print('Component get failed.', file=sys.stderr)
+        return False
+    return comp.runTest()
 
-
-def serial_for_arduinoInit(manager):
-    profile = OpenRTM_aist.Properties(defaults_str=serial_for_arduino_spec)
+def serial_for_arduinoTestInit(manager):
+    profile = OpenRTM_aist.Properties(defaults_str=serial_for_arduinotest_spec)
     manager.registerFactory(profile,
-                            serial_for_arduino,
+                            serial_for_arduinoTest,
                             OpenRTM_aist.Delete)
 
 def MyModuleInit(manager):
-    serial_for_arduinoInit(manager)
+    serial_for_arduinoTestInit(manager)
+    serial_for_arduino.serial_for_arduinoInit(manager)
 
-    # create instance_name option for createComponent()
-    instance_name = [i for i in sys.argv if "--instance_name=" in i]
-    if instance_name:
-        args = instance_name[0].replace("--", "?")
-    else:
-        args = ""
-  
     # Create a component
-    comp = manager.createComponent("serial_for_arduino" + args)
+    comp = manager.createComponent("serial_for_arduinoTest")
 
 def main():
-    # remove --instance_name= option
-    argv = [i for i in sys.argv if not "--instance_name=" in i]
-    # Initialize manager
     mgr = OpenRTM_aist.Manager.init(sys.argv)
     mgr.setModuleInitProc(MyModuleInit)
     mgr.activateManager()
-    mgr.runManager()
+    mgr.runManager(True)
+
+    ret = RunTest()
+    mgr.shutdown()
+
+    if ret:
+        sys.exit(0)
+    else:
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()
