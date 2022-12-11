@@ -2,5 +2,7 @@ tasklist.db
 
 *.log
 .metadata
+*20221*
 
 .vs
+
