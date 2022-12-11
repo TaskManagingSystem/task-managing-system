@@ -22,7 +22,7 @@ SerialCommunicationWithArduino.
 ----|---- 
 | Module Name | serial_for_arduino |
 | Description | SerialCommunicationWithArduino. |
-| Version | 1.0.0 |
+| Version | 1.1.0 |
 | Vendor | HarutoFuruyama |
 | Category | Category |
 | Comp. Type | STATIC |
@@ -213,6 +213,45 @@ SerialCommunicationWithArduino.
 
 
 ### Configuration definition
+
+#### com_port
+
+シリアル通信ポート
+
+
+<table>
+  <tr>
+    <td>DataType</td>
+    <td colspan="2">string</td>
+  </tr>
+  <tr>
+    <td>DefaultValue</td>
+    <td>COM3</td>
+    <td>COM3</td>
+  </tr>
+  <tr>
+    <td>Unit</td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>Widget</td>
+    <td colspan="2">text</td>
+  </tr>
+  <tr>
+    <td>Step</td>
+    <td colspan="2"></td>
+  </tr>
+  <tr>
+    <td>Constraint</td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>Range</td>
+    <td colspan="2"></td>
+  </tr>
+</table>
 
 
 ## Demo

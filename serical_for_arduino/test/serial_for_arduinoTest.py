@@ -39,13 +39,19 @@ import serial_for_arduino
 serial_for_arduinotest_spec = ["implementation_id", "serial_for_arduinoTest", 
          "type_name",         "serial_for_arduinoTest", 
          "description",       "SerialCommunicationWithArduino.", 
-         "version",           "1.0.0", 
+         "version",           "1.1.0", 
          "vendor",            "HarutoFuruyama", 
          "category",          "Category", 
          "activity_type",     "STATIC", 
          "max_instance",      "1", 
          "language",          "Python", 
          "lang_type",         "SCRIPT",
+         "conf.default.com_port", "COM3",
+
+         "conf.__widget__.com_port", "text",
+
+         "conf.__type__.com_port", "string",
+
          ""]
 # </rtc-template>
 
@@ -80,6 +86,12 @@ class serial_for_arduinoTest(OpenRTM_aist.DataFlowComponentBase):
 
         # initialize of configuration-data.
         # <rtc-template block="init_conf_param">
+        """
+        シリアル通信ポート
+         - Name: com_port com_port
+         - DefaultValue: COM3
+        """
+        self._com_port = ['COM3']
         
         # </rtc-template>
 
