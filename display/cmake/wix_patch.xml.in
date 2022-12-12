@@ -1,7 +1,7 @@
 ﻿<CPackWiXPatch>
   <CPackWiXFragment Id="#PRODUCT">
     <CustomAction Id="PostinstAction" Directory="CM_DP_component.@PROJECT_NAME@"
-      ExeCommand='cmd.exe /c omniidl.exe -bpython -I"%RTM_ROOT%\rtm\idl" idl/TaskList.idl idl/TaskListSeq.idl '
+      ExeCommand='cmd.exe /c omniidl.exe -bpython -I"%RTM_ROOT%\rtm\idl" idl/TaskListSeq.idl idl/TaskList.idl '
 
       Execute="deferred" Impersonate="no"/>
     <CustomAction Id="PrermAction" Directory="CM_DP_component.@PROJECT_NAME@"

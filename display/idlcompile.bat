@@ -1,2 +1,2 @@
 @echo off
-omniidl.exe -bpython -I"%RTM_ROOT%\rtm\idl" idl/TaskList.idl idl/TaskListSeq.idl 
+omniidl.exe -bpython -I"%RTM_ROOT%\rtm\idl" idl/TaskListSeq.idl idl/TaskList.idl 

@@ -5,10 +5,10 @@ struct TaskListSeq
 {
   RTC::Time tm;
   sequence<long> task_id;
-  sequence<char> start_time;
-  sequence<char> finish_time;
-  sequence<long> target;
+  sequence<string> start_time;
+  sequence<string> finish_time;
+  sequence<string> target;
   sequence<boolean> status;
-  sequence<char> title;
-  sequence<char> discription;
+  sequence<string> title;
+  sequence<string> discription;
 };

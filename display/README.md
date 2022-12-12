@@ -22,7 +22,7 @@ ModuleDescription
 ----|---- 
 | Module Name | display |
 | Description | ModuleDescription |
-| Version | 1.0.0 |
+| Version | 1.1.0 |
 | Vendor | Tsukasa Takahashi |
 | Category | Category |
 | Comp. Type | STATIC |
@@ -78,8 +78,20 @@ ModuleDescription
     </tr>
   </tr>
   <tr>
-    <td>on_deactivated</td>
-    <td colspan="2"></td>
+    <td rowspan="4">on_deactivated</td>
+    <td colspan="2">implemented</td>
+    <tr>
+      <td>Description</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>PreCondition</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>PostCondition</td>
+      <td></td>
+    </tr>
   </tr>
   <tr>
     <td rowspan="4">on_execute</td>
@@ -120,42 +132,6 @@ ModuleDescription
 </table>
 
 ### InPorts definition
-
-#### latest_task
-
-
-
-<table>
-  <tr>
-    <td>DataType</td>
-    <td>TaskList</td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>IDL file</td>
-    <td colspan="2">TaskList.idl</td>
-  </tr>
-  <tr>
-    <td>Number of Data</td>
-    <td colspan="2"></td>
-  </tr>
-  <tr>
-    <td>Semantics</td>
-    <td colspan="2"></td>
-  </tr>
-  <tr>
-    <td>Unit</td>
-    <td colspan="2"></td>
-  </tr>
-  <tr>
-    <td>Occirrence frecency Period</td>
-    <td colspan="2"></td>
-  </tr>
-  <tr>
-    <td>Operational frecency Period</td>
-    <td colspan="2"></td>
-  </tr>
-</table>
 
 #### task_list
 
@@ -203,12 +179,12 @@ ModuleDescription
 <table>
   <tr>
     <td>DataType</td>
-    <td>TaskListSeq</td>
+    <td>TaskList</td>
     <td></td>
   </tr>
   <tr>
     <td>IDL file</td>
-    <td colspan="2">TaskListSeq.idl</td>
+    <td colspan="2">TaskList.idl</td>
   </tr>
   <tr>
     <td>Number of Data</td>
@@ -233,6 +209,78 @@ ModuleDescription
 </table>
 
 #### complete_task_id
+
+
+
+<table>
+  <tr>
+    <td>DataType</td>
+    <td>RTC::TimedLong</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>IDL file</td>
+    <td colspan="2">BasicDataType.idl</td>
+  </tr>
+  <tr>
+    <td>Number of Data</td>
+    <td colspan="2"></td>
+  </tr>
+  <tr>
+    <td>Semantics</td>
+    <td colspan="2"></td>
+  </tr>
+  <tr>
+    <td>Unit</td>
+    <td colspan="2"></td>
+  </tr>
+  <tr>
+    <td>Occirrence frecency Period</td>
+    <td colspan="2"></td>
+  </tr>
+  <tr>
+    <td>Operational frecency Period</td>
+    <td colspan="2"></td>
+  </tr>
+</table>
+
+#### add_task
+
+
+
+<table>
+  <tr>
+    <td>DataType</td>
+    <td>TaskList</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>IDL file</td>
+    <td colspan="2">TaskList.idl</td>
+  </tr>
+  <tr>
+    <td>Number of Data</td>
+    <td colspan="2"></td>
+  </tr>
+  <tr>
+    <td>Semantics</td>
+    <td colspan="2"></td>
+  </tr>
+  <tr>
+    <td>Unit</td>
+    <td colspan="2"></td>
+  </tr>
+  <tr>
+    <td>Occirrence frecency Period</td>
+    <td colspan="2"></td>
+  </tr>
+  <tr>
+    <td>Operational frecency Period</td>
+    <td colspan="2"></td>
+  </tr>
+</table>
+
+#### delete_task_id
 
 
 

@@ -40,7 +40,7 @@ import display
 displaytest_spec = ["implementation_id", "displayTest", 
          "type_name",         "displayTest", 
          "description",       "ModuleDescription", 
-         "version",           "1.0.0", 
+         "version",           "1.1.0", 
          "vendor",            "Tsukasa Takahashi", 
          "category",          "Category", 
          "activity_type",     "STATIC", 
@@ -66,7 +66,7 @@ class displayTest(OpenRTM_aist.DataFlowComponentBase):
     def __init__(self, manager):
         OpenRTM_aist.DataFlowComponentBase.__init__(self, manager)
 
-        self._d_change_task = OpenRTM_aist.instantiateDataType(TaskListSeq())
+        self._d_change_task = OpenRTM_aist.instantiateDataType(TaskList())
         """
         """
         self._change_taskIn = OpenRTM_aist.InPort("change_task", self._d_change_task)
@@ -74,10 +74,14 @@ class displayTest(OpenRTM_aist.DataFlowComponentBase):
         """
         """
         self._complete_task_idIn = OpenRTM_aist.InPort("complete_task_id", self._d_complete_task_id)
-        self._d_latest_task = OpenRTM_aist.instantiateDataType(TaskList())
+        self._d_add_task = OpenRTM_aist.instantiateDataType(TaskList())
         """
         """
-        self._latest_taskOut = OpenRTM_aist.OutPort("latest_task", self._d_latest_task)
+        self._add_taskIn = OpenRTM_aist.InPort("add_task", self._d_add_task)
+        self._d_delete_task_id = OpenRTM_aist.instantiateDataType(RTC.TimedLong)
+        """
+        """
+        self._delete_task_idIn = OpenRTM_aist.InPort("delete_task_id", self._d_delete_task_id)
         self._d_task_list = OpenRTM_aist.instantiateDataType(TaskListSeq())
         """
         """
@@ -107,9 +111,10 @@ class displayTest(OpenRTM_aist.DataFlowComponentBase):
         # Set InPort buffers
         self.addInPort("change_task",self._change_taskIn)
         self.addInPort("complete_task_id",self._complete_task_idIn)
+        self.addInPort("add_task",self._add_taskIn)
+        self.addInPort("delete_task_id",self._delete_task_idIn)
         
         # Set OutPort buffers
-        self.addOutPort("latest_task",self._latest_taskOut)
         self.addOutPort("task_list",self._task_listOut)
         
         # Set service provider to Ports
@@ -170,18 +175,18 @@ class displayTest(OpenRTM_aist.DataFlowComponentBase):
     
         return RTC.RTC_OK
     
-    #    ##
-    ##
-    ## The deactivated action (Active state exit action)
-    ##
-    ## @param ec_id target ExecutionContext Id
-    ##
-    ## @return RTC::ReturnCode_t
-    ##
-    ##
-    #def onDeactivated(self, ec_id):
+        ##
     #
-    #    return RTC.RTC_OK
+    # The deactivated action (Active state exit action)
+    #
+    # @param ec_id target ExecutionContext Id
+    #
+    # @return RTC::ReturnCode_t
+    #
+    #
+    def onDeactivated(self, ec_id):
+    
+        return RTC.RTC_OK
     
     ##
     #

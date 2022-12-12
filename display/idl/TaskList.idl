@@ -5,10 +5,10 @@ struct TaskList
 {
   RTC::Time tm;
   long task_id;
-  char start_time;
-  char finish_time;
-  long target;
+  string start_time;
+  string finish_time;
+  string target;
   boolean status;
-  char title;
-  char discription;
+  string title;
+  string discription;
 };

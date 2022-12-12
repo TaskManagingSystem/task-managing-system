@@ -5,25 +5,27 @@
 # <rtc-template block="description">
 """
  @file display.py
- @brief DisplayTaskLists
+ @brief ModuleDescription
  @date $Date$
 
 
 """
 # </rtc-template>
 
-import OpenRTM_aist
-import RTC
 import sys
 import time
+sys.path.append(".")
+
 import tkinter as tk
 from tkinter import ttk
 from datetime import datetime
 from distutils.util import strtobool
-sys.path.append(".")
 
 # Import RTM module
+import RTC
+import OpenRTM_aist
 
+import _GlobalIDL
 
 # Import Service implementation class
 # <rtc-template block="service_impl">
@@ -37,89 +39,56 @@ sys.path.append(".")
 
 # This module's spesification
 # <rtc-template block="module_spec">
-display_spec = ["implementation_id", "display",
-                "type_name",         "display",
-                "description",       "DisplayTaskLists",
-                "version",           "1.0.0",
-                "vendor",            "HarutoFuruyama",
-                "category",          "User Interface",
-                "activity_type",     "STATIC",
-                "max_instance",      "1",
-                "language",          "Python",
-                "lang_type",         "SCRIPT",
-                ""]
+display_spec = ["implementation_id", "display", 
+         "type_name",         "display", 
+         "description",       "ModuleDescription", 
+         "version",           "1.1.0", 
+         "vendor",            "Tsukasa Takahashi", 
+         "category",          "Category", 
+         "activity_type",     "STATIC", 
+         "max_instance",      "1", 
+         "language",          "Python", 
+         "lang_type",         "SCRIPT",
+         ""]
 # </rtc-template>
 
 # <rtc-template block="component_description">
 ##
 # @class display
-# @brief DisplayTaskLists
-#
-#
+# @brief ModuleDescription
+# 
+# 
 # </rtc-template>
-
-
 class display(OpenRTM_aist.DataFlowComponentBase):
-
+	
     ##
     # @brief constructor
     # @param manager Maneger Object
-    #
+    # 
     def __init__(self, manager):
         OpenRTM_aist.DataFlowComponentBase.__init__(self, manager)
 
-        self._d_latest_task = OpenRTM_aist.instantiateDataType(
-            RTC.TimedStringSeq)
+        self._d_task_list = OpenRTM_aist.instantiateDataType(_GlobalIDL.TaskListSeq(tm=0, task_id=[], start_time=[], finish_time=[], target=[], status=False, title=[], discription=[]))
         """
         """
-        self._latest_taskIn = OpenRTM_aist.InPort(
-            "latest_task", self._d_latest_task)
-        self._d_id = OpenRTM_aist.instantiateDataType(RTC.TimedLongSeq)
+        self._task_listIn = OpenRTM_aist.InPort("task_list", self._d_task_list)
+        self._d_change_task = OpenRTM_aist.instantiateDataType(_GlobalIDL.TaskList(tm=0, task_id=-1, start_time="", finish_time="", target="", status=False, title="", discription=""))
         """
         """
-        self._idIn = OpenRTM_aist.InPort("id", self._d_id)
-        self._d_start_time = OpenRTM_aist.instantiateDataType(
-            RTC.TimedStringSeq)
+        self._change_taskOut = OpenRTM_aist.OutPort("change_task", self._d_change_task)
+        self._d_complete_task_id = OpenRTM_aist.instantiateDataType(RTC.TimedLong)
         """
         """
-        self._start_timeIn = OpenRTM_aist.InPort(
-            "start_time", self._d_start_time)
-        self._d_finish_time = OpenRTM_aist.instantiateDataType(
-            RTC.TimedStringSeq)
+        self._complete_task_idOut = OpenRTM_aist.OutPort("complete_task_id", self._d_complete_task_id)
+        self._d_add_task = OpenRTM_aist.instantiateDataType(_GlobalIDL.TaskList(tm=0, task_id=-1, start_time="", finish_time="", target="", status=False, title="", discription=""))
         """
         """
-        self._finish_timeIn = OpenRTM_aist.InPort(
-            "finish_time", self._d_finish_time)
-        self._d_target = OpenRTM_aist.instantiateDataType(RTC.TimedStringSeq)
+        self._add_taskOut = OpenRTM_aist.OutPort("add_task", self._d_add_task)
+        self._d_delete_task_id = OpenRTM_aist.instantiateDataType(RTC.TimedLong)
         """
         """
-        self._targetIn = OpenRTM_aist.InPort("target", self._d_target)
-        self._d_status = OpenRTM_aist.instantiateDataType(RTC.TimedBooleanSeq)
-        """
-        """
-        self._statusIn = OpenRTM_aist.InPort("status", self._d_status)
-        self._d_title = OpenRTM_aist.instantiateDataType(RTC.TimedStringSeq)
-        """
-        """
-        self._titleIn = OpenRTM_aist.InPort("title", self._d_title)
-        self._d_description = OpenRTM_aist.instantiateDataType(
-            RTC.TimedStringSeq)
-        """
-        """
-        self._descriptionIn = OpenRTM_aist.InPort(
-            "description", self._d_description)
-        self._d_change_task = OpenRTM_aist.instantiateDataType(
-            RTC.TimedStringSeq)
-        """
-        """
-        self._change_taskOut = OpenRTM_aist.OutPort(
-            "change_task", self._d_change_task)
-        self._d_complete_task_id = OpenRTM_aist.instantiateDataType(
-            RTC.TimedLong)
-        """
-        """
-        self._complete_task_idOut = OpenRTM_aist.OutPort(
-            "complete_task_id", self._d_complete_task_id)
+        self._delete_task_idOut = OpenRTM_aist.OutPort("delete_task_id", self._d_delete_task_id)
+
 
         self.edit_record_textboxes = []
 
@@ -185,88 +154,85 @@ class display(OpenRTM_aist.DataFlowComponentBase):
         self._change_taskOut.write()
         print(taskList_edited)
 
+
         # initialize of configuration-data.
         # <rtc-template block="init_conf_param">
-
+		
         # </rtc-template>
 
+
+		 
     ##
     #
     # The initialize action (on CREATED->ALIVE transition)
-    #
+    # 
     # @return RTC::ReturnCode_t
+    # 
     #
-    #
-
     def onInitialize(self):
         # Bind variables and configuration variable
-
+		
         # Set InPort buffers
-        self.addInPort("latest_task", self._latest_taskIn)
-        self.addInPort("id", self._idIn)
-        self.addInPort("start_time", self._start_timeIn)
-        self.addInPort("finish_time", self._finish_timeIn)
-        self.addInPort("target", self._targetIn)
-        self.addInPort("status", self._statusIn)
-        self.addInPort("title", self._titleIn)
-        self.addInPort("description", self._descriptionIn)
-
+        self.addInPort("task_list",self._task_listIn)
+		
         # Set OutPort buffers
-        self.addOutPort("change_task", self._change_taskOut)
-        self.addOutPort("complete_task_id", self._complete_task_idOut)
-
+        self.addOutPort("change_task",self._change_taskOut)
+        self.addOutPort("complete_task_id",self._complete_task_idOut)
+        self.addOutPort("add_task",self._add_taskOut)
+        self.addOutPort("delete_task_id",self._delete_task_idOut)
+		
         # Set service provider to Ports
-
+		
         # Set service consumers to Ports
-
+		
         # Set CORBA Service Ports
-
+		
         return RTC.RTC_OK
-
+	
     ###
-    ##
-    # The finalize action (on ALIVE->END transition)
-    ##
-    # @return RTC::ReturnCode_t
+    ## 
+    ## The finalize action (on ALIVE->END transition)
+    ## 
+    ## @return RTC::ReturnCode_t
     #
-    ##
-    # def onFinalize(self):
+    ## 
+    #def onFinalize(self):
     #
 
     #    return RTC.RTC_OK
-
+	
     ###
     ##
-    # The startup action when ExecutionContext startup
+    ## The startup action when ExecutionContext startup
+    ## 
+    ## @param ec_id target ExecutionContext Id
     ##
-    # @param ec_id target ExecutionContext Id
-    ##
-    # @return RTC::ReturnCode_t
+    ## @return RTC::ReturnCode_t
     ##
     ##
-    # def onStartup(self, ec_id):
+    #def onStartup(self, ec_id):
     #
     #    return RTC.RTC_OK
-
+	
     ###
     ##
-    # The shutdown action when ExecutionContext stop
+    ## The shutdown action when ExecutionContext stop
     ##
-    # @param ec_id target ExecutionContext Id
+    ## @param ec_id target ExecutionContext Id
     ##
-    # @return RTC::ReturnCode_t
+    ## @return RTC::ReturnCode_t
     ##
     ##
-    # def onShutdown(self, ec_id):
+    #def onShutdown(self, ec_id):
     #
     #    return RTC.RTC_OK
-
+	
     ##
     #
     # The activated action (Active state entry action)
     #
     # @param ec_id target ExecutionContext Id
-    #
+    # 
     # @return RTC::ReturnCode_t
     #
     #
@@ -342,7 +308,7 @@ class display(OpenRTM_aist.DataFlowComponentBase):
         self.latest_task = ['', '0-0-0 0:0:0', '0-0-0 0:0:0', '', '', '', '']
 
         return RTC.RTC_OK
-
+	
     ##
     #
     # The deactivated action (Active state exit action)
@@ -355,8 +321,9 @@ class display(OpenRTM_aist.DataFlowComponentBase):
     def onDeactivated(self, ec_id):
         self.root.destroy()
         print('Deactivated')
-        return RTC.RTC_OK
 
+        return RTC.RTC_OK
+	
     ##
     #
     # The execution action that is invoked periodically
@@ -374,6 +341,27 @@ class display(OpenRTM_aist.DataFlowComponentBase):
         self.clock.delete('all')
         self.clock.create_text(250, 50, text=now_str, font=(None, 36))
 
+
+        # 全てのタスクのデータを取得する
+        task_list = [
+            ['id'],
+            ['2020-8-12 6:45:0'],
+            ['2021-1-13 7:40:0'],
+            ['target'],
+            ['status'],
+            ['title'],
+            ['description']
+        ]
+        if self._task_listIn.isNew():
+            task_list[0] = self._idIn.read().task_id
+            task_list[1] = self._idIn.read().start_time
+            task_list[2] = self._idIn.read().finish_time
+            task_list[3] = self._idIn.read().target
+            task_list[4] = self._idIn.read().status
+            task_list[5] = self._idIn.read().title
+            task_list[6] = self._idIn.read().discription
+
+
         # 最新のタスクを取得する
         self.latest_task = ['123', '2022-11-17 7:18:0',
                             '2022-11-18 23:59:59', 'person', 'False', 'title', 'description']
@@ -382,8 +370,15 @@ class display(OpenRTM_aist.DataFlowComponentBase):
         task_name = 'タスク名'
         person_name = '人'
         description = '説明'
-        if self._latest_taskIn.isNew():
-            self.latest_task = self._latest_taskIn.read().data
+
+        if self._task_listIn.isNew():
+            # task_listから直近かつ未完了のものを選択
+            for i in range(len(task_list[0])):
+                if not task_list[4][i]:
+                    self.latest_task = [task_list[0][i], task_list[1][i], task_list[2][i], task_list[3][i], task_list[4][i], task_list[5][i], task_list[6][i]]
+                else:
+                    break
+
             try:
                 if strtobool(self.latest_task[4]) == 0:
                     start_time = datetime.strptime(
@@ -446,31 +441,6 @@ class display(OpenRTM_aist.DataFlowComponentBase):
         self.progress.create_rectangle(
             int(1000*progress_per), 0, 1000, 60, fill='orange')
 
-        # 全てのタスクのデータを取得する
-        task_list = [
-            ['id'],
-            ['2020-8-12 6:45:0'],
-            ['2021-1-13 7:40:0'],
-            ['target'],
-            ['status'],
-            ['title'],
-            ['description']
-        ]
-        if self._idIn.isNew():
-            task_list[0] = self._idIn.read().data
-        if self._start_timeIn.isNew():
-            task_list[1] = self._start_timeIn.read().data
-        if self._finish_timeIn.isNew():
-            task_list[2] = self._finish_timeIn.read().data
-        if self._targetIn.isNew():
-            task_list[3] = self._targetIn.read().data
-        if self._statusIn.isNew():
-            task_list[4] = self._statusIn.read().data
-        if self._titleIn.isNew():
-            task_list[5] = self._titleIn.read().data
-        if self._descriptionIn.isNew():
-            task_list[6] = self._descriptionIn.read().data
-
         for i in self.taskList_tree.get_children():
             self.taskList_tree.delete(i)
         # for i in range(len(task_list[0])):
@@ -497,73 +467,76 @@ class display(OpenRTM_aist.DataFlowComponentBase):
 
         self.root.update_idletasks()
         self.root.update()
+ 
         return RTC.RTC_OK
-
+	
     ###
     ##
-    # The aborting action when main logic error occurred.
+    ## The aborting action when main logic error occurred.
     ##
-    # @param ec_id target ExecutionContext Id
+    ## @param ec_id target ExecutionContext Id
     ##
-    # @return RTC::ReturnCode_t
+    ## @return RTC::ReturnCode_t
     ##
     ##
-    # def onAborting(self, ec_id):
+    #def onAborting(self, ec_id):
     #
     #    return RTC.RTC_OK
-
+	
     ###
     ##
-    # The error action in ERROR state
+    ## The error action in ERROR state
     ##
-    # @param ec_id target ExecutionContext Id
+    ## @param ec_id target ExecutionContext Id
     ##
-    # @return RTC::ReturnCode_t
+    ## @return RTC::ReturnCode_t
     ##
     ##
-    # def onError(self, ec_id):
+    #def onError(self, ec_id):
     #
     #    return RTC.RTC_OK
-
+	
     ###
     ##
-    # The reset action that is invoked resetting
+    ## The reset action that is invoked resetting
     ##
-    # @param ec_id target ExecutionContext Id
+    ## @param ec_id target ExecutionContext Id
     ##
-    # @return RTC::ReturnCode_t
+    ## @return RTC::ReturnCode_t
     ##
     ##
-    # def onReset(self, ec_id):
+    #def onReset(self, ec_id):
     #
     #    return RTC.RTC_OK
-
+	
     ###
     ##
-    # The state update action that is invoked after onExecute() action
+    ## The state update action that is invoked after onExecute() action
     ##
-    # @param ec_id target ExecutionContext Id
+    ## @param ec_id target ExecutionContext Id
     ##
-    # @return RTC::ReturnCode_t
+    ## @return RTC::ReturnCode_t
     ##
 
     ##
-    # def onStateUpdate(self, ec_id):
+    #def onStateUpdate(self, ec_id):
     #
     #    return RTC.RTC_OK
-
+	
     ###
     ##
-    # The action that is invoked when execution context's rate is changed
+    ## The action that is invoked when execution context's rate is changed
     ##
-    # @param ec_id target ExecutionContext Id
+    ## @param ec_id target ExecutionContext Id
     ##
-    # @return RTC::ReturnCode_t
+    ## @return RTC::ReturnCode_t
     ##
     ##
-    # def onRateChanged(self, ec_id):
+    #def onRateChanged(self, ec_id):
     #
     #    return RTC.RTC_OK
+	
+
 
 
 def displayInit(manager):
@@ -571,7 +544,6 @@ def displayInit(manager):
     manager.registerFactory(profile,
                             display,
                             OpenRTM_aist.Delete)
-
 
 def MyModuleInit(manager):
     displayInit(manager)
@@ -582,10 +554,9 @@ def MyModuleInit(manager):
         args = instance_name[0].replace("--", "?")
     else:
         args = ""
-
+  
     # Create a component
     comp = manager.createComponent("display" + args)
-
 
 def main():
     # remove --instance_name= option
@@ -596,6 +567,6 @@ def main():
     mgr.activateManager()
     mgr.runManager()
 
-
 if __name__ == "__main__":
     main()
+
