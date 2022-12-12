@@ -22,7 +22,7 @@ ModuleDescription
 ----|---- 
 | Module Name | write_SQL |
 | Description | ModuleDescription |
-| Version | 1.0.0 |
+| Version | 1.2.0 |
 | Vendor | Tsukasa Takahashi |
 | Category | Category |
 | Comp. Type | STATIC |
@@ -176,12 +176,12 @@ ModuleDescription
 <table>
   <tr>
     <td>DataType</td>
-    <td>RTC::TimedStringSeq</td>
+    <td>TaskList</td>
     <td></td>
   </tr>
   <tr>
     <td>IDL file</td>
-    <td colspan="2">BasicDataType.idl</td>
+    <td colspan="2">TaskList.idl</td>
   </tr>
   <tr>
     <td>Number of Data</td>
@@ -212,7 +212,43 @@ ModuleDescription
 <table>
   <tr>
     <td>DataType</td>
-    <td>RTC::TimedStringSeq</td>
+    <td>TaskList</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>IDL file</td>
+    <td colspan="2">TaskList.idl</td>
+  </tr>
+  <tr>
+    <td>Number of Data</td>
+    <td colspan="2"></td>
+  </tr>
+  <tr>
+    <td>Semantics</td>
+    <td colspan="2"></td>
+  </tr>
+  <tr>
+    <td>Unit</td>
+    <td colspan="2"></td>
+  </tr>
+  <tr>
+    <td>Occirrence frecency Period</td>
+    <td colspan="2"></td>
+  </tr>
+  <tr>
+    <td>Operational frecency Period</td>
+    <td colspan="2"></td>
+  </tr>
+</table>
+
+#### delete_task_id
+
+
+
+<table>
+  <tr>
+    <td>DataType</td>
+    <td>RTC::TimedLong</td>
     <td></td>
   </tr>
   <tr>
@@ -250,9 +286,9 @@ ModuleDescription
 
 ### Configuration definition
 
-#### database_path
+#### database_conf
 
-
+データベースの相対パス, データベース内のテーブル名
 
 
 <table>
@@ -262,8 +298,47 @@ ModuleDescription
   </tr>
   <tr>
     <td>DefaultValue</td>
-    <td>../tasklist.db</td>
+    <td>../tasklist.db', 'task</td>
+    <td>../tasklist.db', 'task</td>
+  </tr>
+  <tr>
+    <td>Unit</td>
     <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>Widget</td>
+    <td colspan="2">spin</td>
+  </tr>
+  <tr>
+    <td>Step</td>
+    <td colspan="2"></td>
+  </tr>
+  <tr>
+    <td>Constraint</td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>Range</td>
+    <td colspan="2"></td>
+  </tr>
+</table>
+
+#### data_type
+
+databaseのカラム名、カラムのデータ型
+
+
+<table>
+  <tr>
+    <td>DataType</td>
+    <td colspan="2">string</td>
+  </tr>
+  <tr>
+    <td>DefaultValue</td>
+    <td>id integer primarykey autoincrement, start_time text, finish_time text, target text, status integer, title text, discription text</td>
+    <td>id integer primarykey autoincrement, start_time text, finish_time text, target text, status integer, title text, discription text</td>
   </tr>
   <tr>
     <td>Unit</td>
@@ -285,7 +360,7 @@ ModuleDescription
   </tr>
   <tr>
     <td>Range</td>
-    <td colspan="2"></td>
+    <td colspan="2">{variable name} + {"null" or "integer" or "real" or "text" or "blob"} + {option}, ...</td>
   </tr>
 </table>
 

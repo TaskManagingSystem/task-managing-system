@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<rtc:RtcProfile rtc:version="0.3" rtc:id="RTC:Tsukasa Takahashi:Category:write_SQL:1.0.0" xmlns:rtc="http://www.openrtp.org/namespaces/rtc" xmlns:rtcExt="http://www.openrtp.org/namespaces/rtc_ext" xmlns:rtcDoc="http://www.openrtp.org/namespaces/rtc_doc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-    <rtc:BasicInfo xsi:type="rtcExt:basic_info_ext" rtcExt:saveProject="write_SQL" rtc:updateDate="2022-10-24T01:51:23.000+09:00" rtc:creationDate="2022-10-24T01:20:17.000+09:00" rtc:version="1.0.0" rtc:vendor="Tsukasa Takahashi" rtc:maxInstances="1" rtc:executionType="PeriodicExecutionContext" rtc:executionRate="1000.0" rtc:description="ModuleDescription" rtc:category="Category" rtc:componentKind="DataFlowComponent" rtc:activityType="PERIODIC" rtc:componentType="STATIC" rtc:name="write_SQL"/>
+<rtc:RtcProfile rtc:version="0.3" rtc:id="RTC:Tsukasa Takahashi:Category:write_SQL:1.2.0" xmlns:rtc="http://www.openrtp.org/namespaces/rtc" xmlns:rtcExt="http://www.openrtp.org/namespaces/rtc_ext" xmlns:rtcDoc="http://www.openrtp.org/namespaces/rtc_doc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <rtc:BasicInfo xsi:type="rtcExt:basic_info_ext" rtcExt:saveProject="write_SQL" rtc:updateDate="2022-12-13T04:24:40.000+09:00" rtc:creationDate="2022-10-24T01:20:17.000+09:00" rtc:version="1.2.0" rtc:vendor="Tsukasa Takahashi" rtc:maxInstances="1" rtc:executionType="PeriodicExecutionContext" rtc:executionRate="1000.0" rtc:description="ModuleDescription" rtc:category="Category" rtc:componentKind="DataFlowComponent" rtc:activityType="PERIODIC" rtc:componentType="STATIC" rtc:name="write_SQL"/>
     <rtc:Actions>
         <rtc:OnInitialize xsi:type="rtcDoc:action_status_doc" rtc:implemented="true"/>
         <rtc:OnFinalize xsi:type="rtcDoc:action_status_doc" rtc:implemented="false"/>
@@ -16,12 +16,18 @@
         <rtc:OnRateChanged xsi:type="rtcDoc:action_status_doc" rtc:implemented="false"/>
     </rtc:Actions>
     <rtc:ConfigurationSet>
-        <rtc:Configuration xsi:type="rtcExt:configuration_ext" rtcExt:variableName="" rtc:unit="" rtc:defaultValue="../tasklist.db" rtc:type="string" rtc:name="database_path">
+        <rtc:Configuration xsi:type="rtcExt:configuration_ext" rtcExt:variableName="database_conf" rtc:unit="" rtc:defaultValue="../tasklist.db', 'task" rtc:type="string" rtc:name="database_conf">
+            <rtcDoc:Doc rtcDoc:constraint="" rtcDoc:range="" rtcDoc:unit="" rtcDoc:description="データベースの相対パス, データベース内のテーブル名" rtcDoc:defaultValue="../tasklist.db', 'task" rtcDoc:dataname=""/>
+            <rtcExt:Properties rtcExt:value="spin." rtcExt:name="__widget__"/>
+        </rtc:Configuration>
+        <rtc:Configuration xsi:type="rtcExt:configuration_ext" rtcExt:variableName="data_type" rtc:unit="" rtc:defaultValue="id integer primarykey autoincrement, start_time text, finish_time text, target text, status integer, title text, discription text" rtc:type="string" rtc:name="data_type">
+            <rtcDoc:Doc rtcDoc:constraint="" rtcDoc:range="{variable name} + {&quot;null&quot; or &quot;integer&quot; or &quot;real&quot; or &quot;text&quot; or &quot;blob&quot;} + {option}, ..." rtcDoc:unit="" rtcDoc:description="databaseのカラム名、カラムのデータ型" rtcDoc:defaultValue="id integer primarykey autoincrement, start_time text, finish_time text, target text, status integer, title text, discription text" rtcDoc:dataname="data_type"/>
             <rtcExt:Properties rtcExt:value="text" rtcExt:name="__widget__"/>
         </rtc:Configuration>
     </rtc:ConfigurationSet>
     <rtc:DataPorts xsi:type="rtcExt:dataport_ext" rtcExt:position="LEFT" rtcExt:variableName="complete_task_id" rtc:unit="" rtc:subscriptionType="" rtc:dataflowType="" rtc:interfaceType="" rtc:idlFile="&lt;RTM_ROOT&gt;\rtm\idl\BasicDataType.idl" rtc:type="RTC::TimedLong" rtc:name="complete_task_id" rtc:portType="DataInPort"/>
-    <rtc:DataPorts xsi:type="rtcExt:dataport_ext" rtcExt:position="LEFT" rtcExt:variableName="change_task" rtc:unit="" rtc:subscriptionType="" rtc:dataflowType="" rtc:interfaceType="" rtc:idlFile="&lt;RTM_ROOT&gt;\rtm\idl\BasicDataType.idl" rtc:type="RTC::TimedStringSeq" rtc:name="change_task" rtc:portType="DataInPort"/>
-    <rtc:DataPorts xsi:type="rtcExt:dataport_ext" rtcExt:position="LEFT" rtcExt:variableName="add_task" rtc:unit="" rtc:subscriptionType="" rtc:dataflowType="" rtc:interfaceType="" rtc:idlFile="&lt;RTM_ROOT&gt;\rtm\idl\BasicDataType.idl" rtc:type="RTC::TimedStringSeq" rtc:name="add_task" rtc:portType="DataInPort"/>
+    <rtc:DataPorts xsi:type="rtcExt:dataport_ext" rtcExt:position="LEFT" rtcExt:variableName="change_task" rtc:unit="" rtc:subscriptionType="" rtc:dataflowType="" rtc:interfaceType="" rtc:idlFile="idl\TaskList.idl" rtc:type="TaskList" rtc:name="change_task" rtc:portType="DataInPort"/>
+    <rtc:DataPorts xsi:type="rtcExt:dataport_ext" rtcExt:position="LEFT" rtcExt:variableName="add_task" rtc:unit="" rtc:subscriptionType="" rtc:dataflowType="" rtc:interfaceType="" rtc:idlFile="idl\TaskList.idl" rtc:type="TaskList" rtc:name="add_task" rtc:portType="DataInPort"/>
+    <rtc:DataPorts xsi:type="rtcExt:dataport_ext" rtcExt:position="LEFT" rtcExt:variableName="delete_task_id" rtc:unit="" rtc:subscriptionType="" rtc:dataflowType="" rtc:interfaceType="" rtc:idlFile="&lt;RTM_ROOT&gt;\rtm\idl\BasicDataType.idl" rtc:type="RTC::TimedLong" rtc:name="delete_task_id" rtc:portType="DataInPort"/>
     <rtc:Language xsi:type="rtcExt:language_ext" rtc:kind="Python"/>
 </rtc:RtcProfile>

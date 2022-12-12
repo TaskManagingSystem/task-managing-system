@@ -1,4 +1,4 @@
-set(IDL_FILES "" )
+set(IDL_FILES "" TaskList.idl )
 
 if(WIN32)
   set(SCRIPT_FILE ${PROJECT_SOURCE_DIR}/idlcompile.bat)

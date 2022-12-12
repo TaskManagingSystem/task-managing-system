@@ -21,6 +21,7 @@ sys.path.append(".")
 import RTC
 import OpenRTM_aist
 
+import _GlobalIDL
 
 # Import Service implementation class
 # <rtc-template block="service_impl">
@@ -39,18 +40,21 @@ import write_SQL
 write_sqltest_spec = ["implementation_id", "write_SQLTest", 
          "type_name",         "write_SQLTest", 
          "description",       "ModuleDescription", 
-         "version",           "1.0.0", 
+         "version",           "1.2.0", 
          "vendor",            "Tsukasa Takahashi", 
          "category",          "Category", 
          "activity_type",     "STATIC", 
          "max_instance",      "1", 
          "language",          "Python", 
          "lang_type",         "SCRIPT",
-         "conf.default.database_path", "../tasklist.db",
+         "conf.default.database_conf", "../tasklist.db', 'task",
+         "conf.default.data_type", "id integer primarykey autoincrement, start_time text, finish_time text, target text, status integer, title text, discription text",
 
-         "conf.__widget__.database_path", "text",
+         "conf.__widget__.database_conf", "spin",
+         "conf.__widget__.data_type", "text",
 
-         "conf.__type__.database_path", "string",
+         "conf.__type__.database_conf", "string",
+         "conf.__type__.data_type", "string",
 
          ""]
 # </rtc-template>
@@ -75,14 +79,18 @@ class write_SQLTest(OpenRTM_aist.DataFlowComponentBase):
         """
         """
         self._complete_task_idOut = OpenRTM_aist.OutPort("complete_task_id", self._d_complete_task_id)
-        self._d_change_task = OpenRTM_aist.instantiateDataType(RTC.TimedStringSeq)
+        self._d_change_task = OpenRTM_aist.instantiateDataType(TaskList())
         """
         """
         self._change_taskOut = OpenRTM_aist.OutPort("change_task", self._d_change_task)
-        self._d_add_task = OpenRTM_aist.instantiateDataType(RTC.TimedStringSeq)
+        self._d_add_task = OpenRTM_aist.instantiateDataType(TaskList())
         """
         """
         self._add_taskOut = OpenRTM_aist.OutPort("add_task", self._d_add_task)
+        self._d_delete_task_id = OpenRTM_aist.instantiateDataType(RTC.TimedLong)
+        """
+        """
+        self._delete_task_idOut = OpenRTM_aist.OutPort("delete_task_id", self._d_delete_task_id)
 
 
         
@@ -91,11 +99,19 @@ class write_SQLTest(OpenRTM_aist.DataFlowComponentBase):
         # initialize of configuration-data.
         # <rtc-template block="init_conf_param">
         """
-        
-         - Name:  database_path
-         - DefaultValue: ../tasklist.db
+        データベースの相対パス, データベース内のテーブル名
+         - Name:  database_conf
+         - DefaultValue: ../tasklist.db', 'task
         """
-        self._database_path = ['../tasklist.db']
+        self._database_conf = ['../tasklist.db', 'task']
+        """
+        databaseのカラム名、カラムのデータ型
+         - Name: data_type data_type
+         - DefaultValue: id integer primarykey autoincrement, start_time text, finish_time text, target text, status integer, title text, discription text
+         - Range: {variable name} + {"null" or "integer" or "real" or "text" or
+		          "blob"} + {option}, ...
+        """
+        self._data_type = ['id integer primarykey autoincrement, start_time text, finish_time text, target text, status integer, title text, discription text']
         
         # </rtc-template>
 
@@ -110,7 +126,8 @@ class write_SQLTest(OpenRTM_aist.DataFlowComponentBase):
     #
     def onInitialize(self):
         # Bind variables and configuration variable
-        self.bindParameter("database_path", self._database_path, "../tasklist.db")
+        self.bindParameter("database_conf", self._database_conf, "../tasklist.db', 'task")
+        self.bindParameter("data_type", self._data_type, "id integer primarykey autoincrement, start_time text, finish_time text, target text, status integer, title text, discription text")
         
         # Set InPort buffers
         
@@ -118,6 +135,7 @@ class write_SQLTest(OpenRTM_aist.DataFlowComponentBase):
         self.addOutPort("complete_task_id",self._complete_task_idOut)
         self.addOutPort("change_task",self._change_taskOut)
         self.addOutPort("add_task",self._add_taskOut)
+        self.addOutPort("delete_task_id",self._delete_task_idOut)
         
         # Set service provider to Ports
         
