@@ -48,15 +48,12 @@ read_sql_spec = ["implementation_id", "read_SQL",
          "language",          "Python", 
          "lang_type",         "SCRIPT",
          "conf.default.database_conf", "../tasklist.db', 'task",
-         "conf.default.data_type", "id integer primarykey autoincrement, start_time text, finish_time text, target text, status integer, title text, discription text",
          "conf.default.sort", "start_time', 'ASC",
 
          "conf.__widget__.database_conf", "text",
-         "conf.__widget__.data_type", "text",
          "conf.__widget__.sort", "text",
 
          "conf.__type__.database_conf", "string",
-         "conf.__type__.data_type", "string",
          "conf.__type__.sort", "string",
 
          ""]
@@ -80,7 +77,7 @@ class read_SQL(OpenRTM_aist.DataFlowComponentBase):
     def __init__(self, manager):
         OpenRTM_aist.DataFlowComponentBase.__init__(self, manager)
 
-        self._d_db_out = OpenRTM_aist.instantiateDataType(_GlobalIDL.TaskListSeq(tm=0, task_id=-1, start_time="", finish_time="", target="", status=False, title="", discription=""))
+        self._d_db_out = OpenRTM_aist.instantiateDataType(_GlobalIDL.TaskListSeq(tm=0, task_id=[], start_time=[], finish_time=[], target=[], status=[], title=[], discription=[]))
         """
         SQLite3 Database
 		SELECT * FROM {table_name}
@@ -99,14 +96,6 @@ class read_SQL(OpenRTM_aist.DataFlowComponentBase):
          - DefaultValue: ../tasklist.db', 'task
         """
         self._database_conf = ['../tasklist.db', 'task']
-        """
-        databaseのカラム名、カラムのデータ型
-         - Name: data_type data_type
-         - DefaultValue: id integer primarykey autoincrement, start_time text, finish_time text, target text, status integer, title text, discription text
-         - Range: {variable name} + {"null" or "integer" or "real" or "text" or
-		          "blob"} + {option}, ...
-        """
-        self._data_type = ['id integer primarykey autoincrement, start_time text, finish_time text, target text, status integer, title text, discription text']
         """
         db_outの並べ替え
          - Name: sort sort
@@ -129,7 +118,6 @@ class read_SQL(OpenRTM_aist.DataFlowComponentBase):
     def onInitialize(self):
         # Bind variables and configuration variable
         self.bindParameter("database_conf", self._database_conf, "../tasklist.db', 'task")
-        self.bindParameter("data_type", self._data_type, "id integer primarykey autoincrement, start_time text, finish_time text, target text, status integer, title text, discription text")
         self.bindParameter("sort", self._sort, "start_time', 'ASC")
 		
         # Set InPort buffers
@@ -193,7 +181,6 @@ class read_SQL(OpenRTM_aist.DataFlowComponentBase):
     #
     #
     def onActivated(self, ec_id):
-     
         # connect task database
         global db
         global db_table

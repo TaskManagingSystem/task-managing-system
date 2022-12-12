@@ -48,15 +48,12 @@ read_sqltest_spec = ["implementation_id", "read_SQLTest",
          "language",          "Python", 
          "lang_type",         "SCRIPT",
          "conf.default.database_conf", "../tasklist.db', 'task",
-         "conf.default.data_type", "id integer primarykey autoincrement, start_time text, finish_time text, target text, status integer, title text, discription text",
          "conf.default.sort", "start_time', 'ASC",
 
          "conf.__widget__.database_conf", "text",
-         "conf.__widget__.data_type", "text",
          "conf.__widget__.sort", "text",
 
          "conf.__type__.database_conf", "string",
-         "conf.__type__.data_type", "string",
          "conf.__type__.sort", "string",
 
          ""]
@@ -100,14 +97,6 @@ class read_SQLTest(OpenRTM_aist.DataFlowComponentBase):
         """
         self._database_conf = ['../tasklist.db', 'task']
         """
-        databaseのカラム名、カラムのデータ型
-         - Name: data_type data_type
-         - DefaultValue: id integer primarykey autoincrement, start_time text, finish_time text, target text, status integer, title text, discription text
-         - Range: {variable name} + {"null" or "integer" or "real" or "text" or
-		          "blob"} + {option}, ...
-        """
-        self._data_type = ['id integer primarykey autoincrement, start_time text, finish_time text, target text, status integer, title text, discription text']
-        """
         db_outの並べ替え
          - Name: sort sort
          - DefaultValue: start_time', 'ASC
@@ -129,7 +118,6 @@ class read_SQLTest(OpenRTM_aist.DataFlowComponentBase):
     def onInitialize(self):
         # Bind variables and configuration variable
         self.bindParameter("database_conf", self._database_conf, "../tasklist.db', 'task")
-        self.bindParameter("data_type", self._data_type, "id integer primarykey autoincrement, start_time text, finish_time text, target text, status integer, title text, discription text")
         self.bindParameter("sort", self._sort, "start_time', 'ASC")
         
         # Set InPort buffers
