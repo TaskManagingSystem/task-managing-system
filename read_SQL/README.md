@@ -6,7 +6,7 @@ ModuleDescription
 
 ## Description
 
-
+SQLite3からデータを取得するコンポーネント
 
 ### Input and Output
 
@@ -22,13 +22,13 @@ ModuleDescription
 ----|---- 
 | Module Name | read_SQL |
 | Description | ModuleDescription |
-| Version | 1.1.0 |
+| Version | 1.2.0 |
 | Vendor | Tsukasa Takahashi |
 | Category | Category |
 | Comp. Type | STATIC |
 | Act. Type | PERIODIC |
 | Kind | DataFlowComponent |
-| MAX Inst. | 1 |
+| MAX Inst. | 0 |
 
 ### Activity definition
 
@@ -136,271 +136,19 @@ ModuleDescription
 
 ### OutPorts definition
 
-#### task_task_id
+#### db_out
 
-
-
-<table>
-  <tr>
-    <td>DataType</td>
-    <td>RTC::TimedLongSeq</td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>IDL file</td>
-    <td colspan="2">BasicDataType.idl</td>
-  </tr>
-  <tr>
-    <td>Number of Data</td>
-    <td colspan="2"></td>
-  </tr>
-  <tr>
-    <td>Semantics</td>
-    <td colspan="2"></td>
-  </tr>
-  <tr>
-    <td>Unit</td>
-    <td colspan="2"></td>
-  </tr>
-  <tr>
-    <td>Occirrence frecency Period</td>
-    <td colspan="2"></td>
-  </tr>
-  <tr>
-    <td>Operational frecency Period</td>
-    <td colspan="2"></td>
-  </tr>
-</table>
-
-#### latest_task
-
-
+SQLite3 Database<br/>SELECT * FROM {table_name}
 
 <table>
   <tr>
     <td>DataType</td>
-    <td>RTC::TimedStringSeq</td>
+    <td>TaskListSeq</td>
     <td></td>
   </tr>
   <tr>
     <td>IDL file</td>
-    <td colspan="2">BasicDataType.idl</td>
-  </tr>
-  <tr>
-    <td>Number of Data</td>
-    <td colspan="2"></td>
-  </tr>
-  <tr>
-    <td>Semantics</td>
-    <td colspan="2"></td>
-  </tr>
-  <tr>
-    <td>Unit</td>
-    <td colspan="2"></td>
-  </tr>
-  <tr>
-    <td>Occirrence frecency Period</td>
-    <td colspan="2"></td>
-  </tr>
-  <tr>
-    <td>Operational frecency Period</td>
-    <td colspan="2"></td>
-  </tr>
-</table>
-
-#### task_start_time
-
-
-
-<table>
-  <tr>
-    <td>DataType</td>
-    <td>RTC::TimedStringSeq</td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>IDL file</td>
-    <td colspan="2">BasicDataType.idl</td>
-  </tr>
-  <tr>
-    <td>Number of Data</td>
-    <td colspan="2"></td>
-  </tr>
-  <tr>
-    <td>Semantics</td>
-    <td colspan="2"></td>
-  </tr>
-  <tr>
-    <td>Unit</td>
-    <td colspan="2"></td>
-  </tr>
-  <tr>
-    <td>Occirrence frecency Period</td>
-    <td colspan="2"></td>
-  </tr>
-  <tr>
-    <td>Operational frecency Period</td>
-    <td colspan="2"></td>
-  </tr>
-</table>
-
-#### task_finish_time
-
-
-
-<table>
-  <tr>
-    <td>DataType</td>
-    <td>RTC::TimedStringSeq</td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>IDL file</td>
-    <td colspan="2">BasicDataType.idl</td>
-  </tr>
-  <tr>
-    <td>Number of Data</td>
-    <td colspan="2"></td>
-  </tr>
-  <tr>
-    <td>Semantics</td>
-    <td colspan="2"></td>
-  </tr>
-  <tr>
-    <td>Unit</td>
-    <td colspan="2"></td>
-  </tr>
-  <tr>
-    <td>Occirrence frecency Period</td>
-    <td colspan="2"></td>
-  </tr>
-  <tr>
-    <td>Operational frecency Period</td>
-    <td colspan="2"></td>
-  </tr>
-</table>
-
-#### task_target
-
-
-
-<table>
-  <tr>
-    <td>DataType</td>
-    <td>RTC::TimedStringSeq</td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>IDL file</td>
-    <td colspan="2">BasicDataType.idl</td>
-  </tr>
-  <tr>
-    <td>Number of Data</td>
-    <td colspan="2"></td>
-  </tr>
-  <tr>
-    <td>Semantics</td>
-    <td colspan="2"></td>
-  </tr>
-  <tr>
-    <td>Unit</td>
-    <td colspan="2"></td>
-  </tr>
-  <tr>
-    <td>Occirrence frecency Period</td>
-    <td colspan="2"></td>
-  </tr>
-  <tr>
-    <td>Operational frecency Period</td>
-    <td colspan="2"></td>
-  </tr>
-</table>
-
-#### task_status
-
-
-
-<table>
-  <tr>
-    <td>DataType</td>
-    <td>RTC::TimedBooleanSeq</td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>IDL file</td>
-    <td colspan="2">BasicDataType.idl</td>
-  </tr>
-  <tr>
-    <td>Number of Data</td>
-    <td colspan="2"></td>
-  </tr>
-  <tr>
-    <td>Semantics</td>
-    <td colspan="2"></td>
-  </tr>
-  <tr>
-    <td>Unit</td>
-    <td colspan="2"></td>
-  </tr>
-  <tr>
-    <td>Occirrence frecency Period</td>
-    <td colspan="2"></td>
-  </tr>
-  <tr>
-    <td>Operational frecency Period</td>
-    <td colspan="2"></td>
-  </tr>
-</table>
-
-#### task_title
-
-
-
-<table>
-  <tr>
-    <td>DataType</td>
-    <td>RTC::TimedStringSeq</td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>IDL file</td>
-    <td colspan="2">BasicDataType.idl</td>
-  </tr>
-  <tr>
-    <td>Number of Data</td>
-    <td colspan="2"></td>
-  </tr>
-  <tr>
-    <td>Semantics</td>
-    <td colspan="2"></td>
-  </tr>
-  <tr>
-    <td>Unit</td>
-    <td colspan="2"></td>
-  </tr>
-  <tr>
-    <td>Occirrence frecency Period</td>
-    <td colspan="2"></td>
-  </tr>
-  <tr>
-    <td>Operational frecency Period</td>
-    <td colspan="2"></td>
-  </tr>
-</table>
-
-#### task_explanation
-
-
-
-<table>
-  <tr>
-    <td>DataType</td>
-    <td>RTC::TimedStringSeq</td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>IDL file</td>
-    <td colspan="2">BasicDataType.idl</td>
+    <td colspan="2">TaskListSeq.idl</td>
   </tr>
   <tr>
     <td>Number of Data</td>
@@ -430,9 +178,9 @@ ModuleDescription
 
 ### Configuration definition
 
-#### database_path
+#### database_conf
 
-
+データベースの相対パス, データベース内のテーブル名
 
 
 <table>
@@ -442,8 +190,8 @@ ModuleDescription
   </tr>
   <tr>
     <td>DefaultValue</td>
-    <td>../tasklist.db</td>
-    <td></td>
+    <td>../tasklist.db', 'task</td>
+    <td>../tasklist.db, task</td>
   </tr>
   <tr>
     <td>Unit</td>
@@ -466,6 +214,84 @@ ModuleDescription
   <tr>
     <td>Range</td>
     <td colspan="2"></td>
+  </tr>
+</table>
+
+#### data_type
+
+databaseのカラム名、カラムのデータ型
+
+
+<table>
+  <tr>
+    <td>DataType</td>
+    <td colspan="2">string</td>
+  </tr>
+  <tr>
+    <td>DefaultValue</td>
+    <td>id integer primarykey autoincrement, start_time text, finish_time text, target text, status integer, title text, discription text</td>
+    <td>id integer primarykey autoincrement, start_time text, finish_time text, target text, status integer, title text, discription text</td>
+  </tr>
+  <tr>
+    <td>Unit</td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>Widget</td>
+    <td colspan="2">text</td>
+  </tr>
+  <tr>
+    <td>Step</td>
+    <td colspan="2"></td>
+  </tr>
+  <tr>
+    <td>Constraint</td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>Range</td>
+    <td colspan="2">{variable name} + {"null" or "integer" or "real" or "text" or "blob"} + {option}, ...</td>
+  </tr>
+</table>
+
+#### sort
+
+db_outの並べ替え
+
+
+<table>
+  <tr>
+    <td>DataType</td>
+    <td colspan="2">string</td>
+  </tr>
+  <tr>
+    <td>DefaultValue</td>
+    <td>start_time', 'ASC</td>
+    <td>start_time', 'ASC</td>
+  </tr>
+  <tr>
+    <td>Unit</td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>Widget</td>
+    <td colspan="2">text</td>
+  </tr>
+  <tr>
+    <td>Step</td>
+    <td colspan="2"></td>
+  </tr>
+  <tr>
+    <td>Constraint</td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>Range</td>
+    <td colspan="2">{coloum name}', '{ASC or DSC}</td>
   </tr>
 </table>
 

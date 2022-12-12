@@ -73,6 +73,7 @@ IF (WIN32)
       set(CPACK_WIX_UI_BANNER "@PROJECT_SOURCE_DIR@/cmake/rt_middleware_banner.bmp")
       set(CPACK_WIX_UI_DIALOG "@PROJECT_SOURCE_DIR@/cmake/rt_middleware_dlg.bmp")
       set(CPACK_WIX_PROPERTY_ARPURLINFOABOUT "http://www.openrtm.org")    
+      set(CPACK_WIX_PATCH_FILE "@WIX_PATCH_FILE@")
     endif()
 
 ELSE(WIN32)

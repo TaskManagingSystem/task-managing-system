@@ -21,6 +21,7 @@ sys.path.append(".")
 import RTC
 import OpenRTM_aist
 
+import _GlobalIDL
 
 # Import Service implementation class
 # <rtc-template block="service_impl">
@@ -39,18 +40,24 @@ import read_SQL
 read_sqltest_spec = ["implementation_id", "read_SQLTest", 
          "type_name",         "read_SQLTest", 
          "description",       "ModuleDescription", 
-         "version",           "1.1.0", 
+         "version",           "1.2.0", 
          "vendor",            "Tsukasa Takahashi", 
          "category",          "Category", 
          "activity_type",     "STATIC", 
-         "max_instance",      "1", 
+         "max_instance",      "0", 
          "language",          "Python", 
          "lang_type",         "SCRIPT",
-         "conf.default.database_path", "../tasklist.db",
+         "conf.default.database_conf", "../tasklist.db', 'task",
+         "conf.default.data_type", "id integer primarykey autoincrement, start_time text, finish_time text, target text, status integer, title text, discription text",
+         "conf.default.sort", "start_time', 'ASC",
 
-         "conf.__widget__.database_path", "text",
+         "conf.__widget__.database_conf", "text",
+         "conf.__widget__.data_type", "text",
+         "conf.__widget__.sort", "text",
 
-         "conf.__type__.database_path", "string",
+         "conf.__type__.database_conf", "string",
+         "conf.__type__.data_type", "string",
+         "conf.__type__.sort", "string",
 
          ""]
 # </rtc-template>
@@ -59,6 +66,8 @@ read_sqltest_spec = ["implementation_id", "read_SQLTest",
 ##
 # @class read_SQLTest
 # @brief ModuleDescription
+# 
+# SQLite3からデータを取得するコンポーネント
 # 
 # 
 # </rtc-template>
@@ -71,38 +80,12 @@ class read_SQLTest(OpenRTM_aist.DataFlowComponentBase):
     def __init__(self, manager):
         OpenRTM_aist.DataFlowComponentBase.__init__(self, manager)
 
-        self._d_task_list = OpenRTM_aist.instantiateDataType(RTC.TimedLongSeq)
+        self._d_db_out = OpenRTM_aist.instantiateDataType(TaskListSeq())
         """
+        SQLite3 Database
+		SELECT * FROM {table_name}
         """
-        self._task_task_idIn = OpenRTM_aist.InPort("task_task_id", self._d_task_list)
-        self._d_latest_task = OpenRTM_aist.instantiateDataType(RTC.TimedStringSeq)
-        """
-        """
-        self._latest_taskIn = OpenRTM_aist.InPort("latest_task", self._d_latest_task)
-        self._d_task_start_time = OpenRTM_aist.instantiateDataType(RTC.TimedStringSeq)
-        """
-        """
-        self._task_start_timeIn = OpenRTM_aist.InPort("task_start_time", self._d_task_start_time)
-        self._d_task_finish_time = OpenRTM_aist.instantiateDataType(RTC.TimedStringSeq)
-        """
-        """
-        self._task_finish_timeIn = OpenRTM_aist.InPort("task_finish_time", self._d_task_finish_time)
-        self._d_task_target = OpenRTM_aist.instantiateDataType(RTC.TimedStringSeq)
-        """
-        """
-        self._task_targetIn = OpenRTM_aist.InPort("task_target", self._d_task_target)
-        self._d_task_status = OpenRTM_aist.instantiateDataType(RTC.TimedBooleanSeq)
-        """
-        """
-        self._task_statusIn = OpenRTM_aist.InPort("task_status", self._d_task_status)
-        self._d_task_title = OpenRTM_aist.instantiateDataType(RTC.TimedStringSeq)
-        """
-        """
-        self._task_titleIn = OpenRTM_aist.InPort("task_title", self._d_task_title)
-        self._d_task_explanation = OpenRTM_aist.instantiateDataType(RTC.TimedStringSeq)
-        """
-        """
-        self._task_explanationIn = OpenRTM_aist.InPort("task_explanation", self._d_task_explanation)
+        self._db_outIn = OpenRTM_aist.InPort("db_out", self._d_db_out)
 
 
         
@@ -111,11 +94,26 @@ class read_SQLTest(OpenRTM_aist.DataFlowComponentBase):
         # initialize of configuration-data.
         # <rtc-template block="init_conf_param">
         """
-        
-         - Name:  database_path
-         - DefaultValue: ../tasklist.db
+        データベースの相対パス, データベース内のテーブル名
+         - Name:  database_conf
+         - DefaultValue: ../tasklist.db', 'task
         """
-        self._database_path = ['../tasklist.db']
+        self._database_conf = ['../tasklist.db', 'task']
+        """
+        databaseのカラム名、カラムのデータ型
+         - Name: data_type data_type
+         - DefaultValue: id integer primarykey autoincrement, start_time text, finish_time text, target text, status integer, title text, discription text
+         - Range: {variable name} + {"null" or "integer" or "real" or "text" or
+		          "blob"} + {option}, ...
+        """
+        self._data_type = ['id integer primarykey autoincrement, start_time text, finish_time text, target text, status integer, title text, discription text']
+        """
+        db_outの並べ替え
+         - Name: sort sort
+         - DefaultValue: start_time', 'ASC
+         - Range: {coloum name}', '{ASC or DSC}
+        """
+        self._sort = ['start_time', 'ASC']
         
         # </rtc-template>
 
@@ -130,17 +128,12 @@ class read_SQLTest(OpenRTM_aist.DataFlowComponentBase):
     #
     def onInitialize(self):
         # Bind variables and configuration variable
-        self.bindParameter("database_path", self._database_path, "../tasklist.db")
+        self.bindParameter("database_conf", self._database_conf, "../tasklist.db', 'task")
+        self.bindParameter("data_type", self._data_type, "id integer primarykey autoincrement, start_time text, finish_time text, target text, status integer, title text, discription text")
+        self.bindParameter("sort", self._sort, "start_time', 'ASC")
         
         # Set InPort buffers
-        self.addInPort("task_task_id",self._task_task_idIn)
-        self.addInPort("latest_task",self._latest_taskIn)
-        self.addInPort("task_start_time",self._task_start_timeIn)
-        self.addInPort("task_finish_time",self._task_finish_timeIn)
-        self.addInPort("task_target",self._task_targetIn)
-        self.addInPort("task_status",self._task_statusIn)
-        self.addInPort("task_title",self._task_titleIn)
-        self.addInPort("task_explanation",self._task_explanationIn)
+        self.addInPort("db_out",self._db_outIn)
         
         # Set OutPort buffers
         

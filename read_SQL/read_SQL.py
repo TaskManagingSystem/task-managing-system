@@ -16,12 +16,14 @@ import sys
 import time
 sys.path.append(".")
 
+import pathlib
 import sqlite3
 
 # Import RTM module
 import RTC
 import OpenRTM_aist
 
+import _GlobalIDL
 
 # Import Service implementation class
 # <rtc-template block="service_impl">
@@ -38,18 +40,24 @@ import OpenRTM_aist
 read_sql_spec = ["implementation_id", "read_SQL", 
          "type_name",         "read_SQL", 
          "description",       "ModuleDescription", 
-         "version",           "1.1.0", 
+         "version",           "1.2.0", 
          "vendor",            "Tsukasa Takahashi", 
          "category",          "Category", 
          "activity_type",     "STATIC", 
-         "max_instance",      "1", 
+         "max_instance",      "0", 
          "language",          "Python", 
          "lang_type",         "SCRIPT",
-         "conf.default.database_path", "../tasklist.db",
+         "conf.default.database_conf", "../tasklist.db', 'task",
+         "conf.default.data_type", "id integer primarykey autoincrement, start_time text, finish_time text, target text, status integer, title text, discription text",
+         "conf.default.sort", "start_time', 'ASC",
 
-         "conf.__widget__.database_path", "text",
+         "conf.__widget__.database_conf", "text",
+         "conf.__widget__.data_type", "text",
+         "conf.__widget__.sort", "text",
 
-         "conf.__type__.database_path", "string",
+         "conf.__type__.database_conf", "string",
+         "conf.__type__.data_type", "string",
+         "conf.__type__.sort", "string",
 
          ""]
 # </rtc-template>
@@ -58,6 +66,8 @@ read_sql_spec = ["implementation_id", "read_SQL",
 ##
 # @class read_SQL
 # @brief ModuleDescription
+# 
+# SQLite3からデータを取得するコンポーネント
 # 
 # 
 # </rtc-template>
@@ -70,38 +80,12 @@ class read_SQL(OpenRTM_aist.DataFlowComponentBase):
     def __init__(self, manager):
         OpenRTM_aist.DataFlowComponentBase.__init__(self, manager)
 
-        self._d_task_list = OpenRTM_aist.instantiateDataType(RTC.TimedLongSeq)
+        self._d_db_out = OpenRTM_aist.instantiateDataType(_GlobalIDL.TaskListSeq(tm=0, task_id=-1, start_time="", finish_time="", target="", status=False, title="", discription=""))
         """
+        SQLite3 Database
+		SELECT * FROM {table_name}
         """
-        self._task_task_idOut = OpenRTM_aist.OutPort("task_task_id", self._d_task_list)
-        self._d_latest_task = OpenRTM_aist.instantiateDataType(RTC.TimedStringSeq)
-        """
-        """
-        self._latest_taskOut = OpenRTM_aist.OutPort("latest_task", self._d_latest_task)
-        self._d_task_start_time = OpenRTM_aist.instantiateDataType(RTC.TimedStringSeq)
-        """
-        """
-        self._task_start_timeOut = OpenRTM_aist.OutPort("task_start_time", self._d_task_start_time)
-        self._d_task_finish_time = OpenRTM_aist.instantiateDataType(RTC.TimedStringSeq)
-        """
-        """
-        self._task_finish_timeOut = OpenRTM_aist.OutPort("task_finish_time", self._d_task_finish_time)
-        self._d_task_target = OpenRTM_aist.instantiateDataType(RTC.TimedStringSeq)
-        """
-        """
-        self._task_targetOut = OpenRTM_aist.OutPort("task_target", self._d_task_target)
-        self._d_task_status = OpenRTM_aist.instantiateDataType(RTC.TimedBooleanSeq)
-        """
-        """
-        self._task_statusOut = OpenRTM_aist.OutPort("task_status", self._d_task_status)
-        self._d_task_title = OpenRTM_aist.instantiateDataType(RTC.TimedStringSeq)
-        """
-        """
-        self._task_titleOut = OpenRTM_aist.OutPort("task_title", self._d_task_title)
-        self._d_task_explanation = OpenRTM_aist.instantiateDataType(RTC.TimedStringSeq)
-        """
-        """
-        self._task_explanationOut = OpenRTM_aist.OutPort("task_explanation", self._d_task_explanation)
+        self._db_outOut = OpenRTM_aist.OutPort("db_out", self._d_db_out)
 
 
 		
@@ -110,11 +94,26 @@ class read_SQL(OpenRTM_aist.DataFlowComponentBase):
         # initialize of configuration-data.
         # <rtc-template block="init_conf_param">
         """
-        
-         - Name:  database_path
-         - DefaultValue: ../tasklist.db
+        データベースの相対パス, データベース内のテーブル名
+         - Name:  database_conf
+         - DefaultValue: ../tasklist.db', 'task
         """
-        self._database_path = ['../tasklist.db']
+        self._database_conf = ['../tasklist.db', 'task']
+        """
+        databaseのカラム名、カラムのデータ型
+         - Name: data_type data_type
+         - DefaultValue: id integer primarykey autoincrement, start_time text, finish_time text, target text, status integer, title text, discription text
+         - Range: {variable name} + {"null" or "integer" or "real" or "text" or
+		          "blob"} + {option}, ...
+        """
+        self._data_type = ['id integer primarykey autoincrement, start_time text, finish_time text, target text, status integer, title text, discription text']
+        """
+        db_outの並べ替え
+         - Name: sort sort
+         - DefaultValue: start_time', 'ASC
+         - Range: {coloum name}', '{ASC or DSC}
+        """
+        self._sort = ['start_time', 'ASC']
 		
         # </rtc-template>
 
@@ -129,19 +128,14 @@ class read_SQL(OpenRTM_aist.DataFlowComponentBase):
     #
     def onInitialize(self):
         # Bind variables and configuration variable
-        self.bindParameter("database_path", self._database_path, "../tasklist.db")
+        self.bindParameter("database_conf", self._database_conf, "../tasklist.db', 'task")
+        self.bindParameter("data_type", self._data_type, "id integer primarykey autoincrement, start_time text, finish_time text, target text, status integer, title text, discription text")
+        self.bindParameter("sort", self._sort, "start_time', 'ASC")
 		
         # Set InPort buffers
 		
         # Set OutPort buffers
-        self.addOutPort("task_task_id",self._task_task_idOut)
-        self.addOutPort("latest_task",self._latest_taskOut)
-        self.addOutPort("task_start_time",self._task_start_timeOut)
-        self.addOutPort("task_finish_time",self._task_finish_timeOut)
-        self.addOutPort("task_target",self._task_targetOut)
-        self.addOutPort("task_status",self._task_statusOut)
-        self.addOutPort("task_title",self._task_titleOut)
-        self.addOutPort("task_explanation",self._task_explanationOut)
+        self.addOutPort("db_out",self._db_outOut)
 		
         # Set service provider to Ports
 		
@@ -199,21 +193,22 @@ class read_SQL(OpenRTM_aist.DataFlowComponentBase):
     #
     #
     def onActivated(self, ec_id):
-        
+     
         # connect task database
         global db
+        global db_table
         global conn
         global cur
-        db = self._database_path[0]
-        conn = sqlite3.connect(db)
+
+        if not pathlib.Path(self._database_conf[0].split('\'')[0]).is_absolute():
+            db = pathlib.Path(self._database_conf[0].split('\'')[0]).resolve()
+        else :
+            db = pathlib.Path(self._database_conf[0].split('\'')[0])
+
+        db_table = self._database_conf[1]                           # the database table-name
+
+        conn = sqlite3.connect('file:'+ pathlib.PureWindowsPath(db).as_posix() +'?mode=ro', uri=True)   # read only mode
         cur = conn.cursor()
-
-        # create table
-        cur.execute('CREATE TABLE IF NOT EXISTS task(id integer primary key autoincrement, start_time text, finish_time text, target text, status integer, title text, discription text)')
-
-        # disconnect the task database
-        # cur.close()
-        # conn.close()
 
         return RTC.RTC_OK
 	
@@ -227,7 +222,6 @@ class read_SQL(OpenRTM_aist.DataFlowComponentBase):
     #
     #
     def onDeactivated(self, ec_id):
-    
         # disconnect the task database
         cur.close()
         conn.close()
@@ -244,50 +238,49 @@ class read_SQL(OpenRTM_aist.DataFlowComponentBase):
     #
     #
     def onExecute(self, ec_id):
-        # connect task database
-        # conn = sqlite3.connect(db)
-        # cur = conn.cursor()
-
-
-        # latest task data
-        cur.execute('SELECT * FROM task ORDER BY start_time asc;')
-        task_list = cur.fetchall()
-        if len(task_list) != 0:
-            self._d_latest_task.data = task_list[0]
-            self._latest_taskOut.write()
-
-
-        # all task data
-        # get data from database
-        cur.execute('SELECT * FROM task;')
-        task_list = cur.fetchall()
-
-        for i in range(len(task_list)):
-            self._d_task_list.data = int(task_list[i][0])
-            self._task_task_idOut.write()
-            self._d_task_start_time.data = task_list[i][1]
-            self._task_start_timeOut.write()
-            self._d_task_finish_time.data = task_list[i][2]
-            self._task_finish_timeOut.write()
-            self._d_task_target.data = task_list[i][2]
-            self._task_targetOut.write()
-
-            # SQLiteのstring型をboolean型に変換
-            if task_list[i][3] == 1:
-                self._d_task_status.data = True
-            elif task_list[i][4] == 0:
-                self._d_task_status.data == False
-            self._task_statusOut.write()
-
-            self._d_task_title.data = task_list[i][5]
-            self._task_titleOut.write()
-            self._d_task_target.data = task_list[i][6]
-            self._task_targetOut.write()
-
     
-        # disconnect the task database
-        # cur.close()
-        # conn.close()
+        # latest task data
+        cur.execute('SELECT * FROM '+ db_table +' ORDER BY '+ self._sort[0].split('\'')[0] +' ' + self._sort[1] + ';')
+        data_list = cur.fetchall()
+
+        if len(data_list) != 0:
+            # get data from database
+            cur.execute('SELECT * FROM ' + db_table + ';')
+            task_list = cur.fetchall()
+
+            task_list_task_id = []
+            task_list_start_time=[]
+            task_list_finish_time=[]
+            task_list_target=[]
+            task_list_status=[]
+            task_list_title=[]
+            task_list_discription=[]
+
+            for i in range(len(data_list)):
+                task_list_task_id.append(int(task_list[i][0]))
+                task_list_start_time.append(task_list[i][1])
+                task_list_finish_time.append(task_list[i][2])
+                task_list_target.append(task_list[i][3])
+
+                # change type from SQLite-string to boolean
+                if task_list[i][3] == 1:
+                    task_list_status.append(True)
+                elif task_list[i][4] == 0:
+                    task_list_status.append(False)
+
+                task_list_title.append(task_list[i][5])
+                task_list_discription.append(task_list[i][6])
+
+            # set and send data
+            self._d_db_out.task_id = task_list_task_id
+            self._d_db_out.start_time = task_list_start_time
+            self._d_db_out.finish_time = task_list_finish_time
+            self._d_db_out.target = task_list_target
+            self._d_db_out.status = task_list_status
+            self._d_db_out.title = task_list_title
+            self._d_db_out.discription = task_list_discription
+
+            self._db_outOut.write()
 
         return RTC.RTC_OK
 	

@@ -9,7 +9,7 @@ endif()
 project(read_SQL)
 string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWER)
 include("${PROJECT_SOURCE_DIR}/cmake/utils.cmake")
-set(PROJECT_VERSION 1.1.0 CACHE STRING "read_SQL version")
+set(PROJECT_VERSION 1.2.0 CACHE STRING "read_SQL version")
 set(UPGRADE_GUID "")
 DISSECT_VERSION()
 set(PROJECT_SHORT_VER ${PROJECT_VERSION_MAJOR}${PROJECT_VERSION_MINOR}${PROJECT_VERSION_REVISION})
@@ -84,10 +84,19 @@ option(BUILD_DOCUMENTATION "Build the documentation" OFF)
 option(BUILD_TESTS "Build the tests" OFF)
 option(BUILD_IDL "Build and install idl" ON)
 
+file(GLOB IDL_FILES "${CMAKE_CURRENT_SOURCE_DIR}/idl/*.idl")
+
+if(WIN32)
+    set(SCRIPT_FILE ""
+                    idlcompile.bat delete.bat)
+else()
+    set(SCRIPT_FILE ""
+                    idlcompile.sh)
+endif()
 
 set(EXEC_FILES ""
                read_SQL.py
-)
+               ${SCRIPT_FILE})
 
 set(OTHER_SRCS CMakeLists.txt
                RTC.xml read_SQL.conf rtc.conf)
@@ -106,6 +115,21 @@ else()
    set(INSTALL_PREFIX "${OPENRTM_SHARE_PREFIX}/components/${PROJECT_TYPE}/${PROJECT_NAME}")
 endif()
 
+# postinst, prerm settings
+if(UNIX)
+		configure_file(${CMAKE_CURRENT_SOURCE_DIR}/postinst.in
+			${CMAKE_CURRENT_SOURCE_DIR}/postinst @ONLY
+		)
+		configure_file(${CMAKE_CURRENT_SOURCE_DIR}/prerm.in
+			  ${CMAKE_CURRENT_SOURCE_DIR}/prerm @ONLY
+		)
+endif()
+
+add_custom_target( ${PROJECT_NAME} ALL
+  COMMAND ${CMAKE_COMMAND} -E make_directory ${PROJECT_BINARY_DIR}/idl
+  COMMAND ${CMAKE_COMMAND} -E copy_directory
+      ${PROJECT_SOURCE_DIR}/idl ${PROJECT_BINARY_DIR}/idl
+)
 
 foreach(target ${EXEC_FILES})
   add_custom_command( TARGET ${PROJECT_NAME} POST_BUILD
@@ -120,6 +144,10 @@ install(PROGRAMS ${EXEC_FILES} DESTINATION "${INSTALL_PREFIX}"
 install(FILES ${PROJECT_SOURCE_DIR}/RTC.xml DESTINATION ${INSTALL_PREFIX}
         COMPONENT component)
 
+if(IDL_FILES)
+    install(FILES ${IDL_FILES} DESTINATION ${INSTALL_PREFIX}/idl
+            COMPONENT component)
+endif(IDL_FILES)
 
 # add uninstall target
 configure_file(
@@ -150,6 +178,20 @@ if(BUILD_IDL)
     add_subdirectory(idl)
 endif(BUILD_IDL)
 
+if(UNIX)
+    set(CPACK_GENERATOR "${LINUX_PACKAGE_GENERATOR}")
+    if(CPACK_DEBIAN_PACKAGE_ARCHITECTURE)
+				set(CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA "${CMAKE_SOURCE_DIR}/postinst;${CMAKE_SOURCE_DIR}/prerm")
+    endif(CPACK_DEBIAN_PACKAGE_ARCHITECTURE)
+    if(CPACK_RPM_PACKAGE_ARCHITECTURE)
+        set(CPACK_RPM_POST_INSTALL_SCRIPT_FILE "${CMAKE_SOURCE_DIR}/postinst")
+        set(CPACK_RPM_POST_UNINSTALL_SCRIPT_FILE "${CMAKE_SOURCE_DIR}/prerm")
+    endif(CPACK_RPM_PACKAGE_ARCHITECTURE)
+endif()
+
+set(WIX_PATCH_FILE "${CMAKE_CURRENT_BINARY_DIR}/wix_patch.xml")
+configure_file("cmake/wix_patch.xml.in"
+           ${WIX_PATCH_FILE} @ONLY)
 
 set(cpack_options "${PROJECT_BINARY_DIR}/cpack_options.cmake")
 configure_file("${PROJECT_SOURCE_DIR}/cmake/cpack_options.cmake.in"
