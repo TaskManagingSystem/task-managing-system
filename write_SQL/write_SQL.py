@@ -213,7 +213,7 @@ class write_SQL(OpenRTM_aist.DataFlowComponentBase):
  
         # create table
 
-        print('CREATE TABLE IF NOT EXISTS ' + db_table + '(' + self._data_type[0] + ')')
+        print('CREATE TABLE IF NOT EXISTS ' + db_table + '(' + self._data_type[0] + ');')
         #cur.execute('CREATE TABLE IF NOT EXISTS ' + db_table + '(' + self._data_type[0] + ')')
     
         return RTC.RTC_OK
