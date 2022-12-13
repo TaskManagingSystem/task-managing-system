@@ -92,8 +92,11 @@ class display(OpenRTM_aist.DataFlowComponentBase):
 
         self.edit_record_textboxes = []
 
+        self.edit_record_textboxes_sub = []
+
     def select_record(self, event):
-        taskList_column = ('ID', '開始', '終了', '人', '名前')
+        print("select_record()")
+        taskList_column = ('ID', '開始', '終了', '実行者', 'ステータス', 'タイトル', '説明')
         record_id = self.taskList_tree.focus()
         task_edit_title_label = tk.Label(
             self.root, text='タスク編集',
@@ -117,8 +120,12 @@ class display(OpenRTM_aist.DataFlowComponentBase):
         )
         task_edit_table_label.grid(column=5, row=5, pady=3, sticky=tk.W)
 
-        for i in range(5):
-            edit_record_label_0 = tk.Label(
+        print("\n\nBefore for loop")
+        print(taskList_column)
+        print()
+        for i in range(7):
+            print("TaskList_column[i]:" + taskList_column[i])
+            edit_record_label_0 = tk.Label(                     # 項目名
                 self.root, text=taskList_column[i],
                 font=(None, 12)
             )
@@ -127,8 +134,7 @@ class display(OpenRTM_aist.DataFlowComponentBase):
 
             print(self.taskList_tree.item(record_id, 'values'))
             print(i)
-            edit_record_label_1_text = self.taskList_tree.item(record_id, 'values')[
-                i]
+            edit_record_label_1_text = self.taskList_tree.item(record_id, 'values')[i]
             edit_record_label_1 = tk.Label(
                 self.root, text=edit_record_label_1_text,
                 font=(None, 12)
@@ -136,23 +142,61 @@ class display(OpenRTM_aist.DataFlowComponentBase):
             edit_record_label_1.grid(column=4, row=6+i, pady=3, sticky=tk.W)
             self.edit_record_textboxes.append(tk.Entry(width=30))
             self.edit_record_textboxes[i].delete(0, tk.END)
-            self.edit_record_textboxes[i].insert(
-                tk.END, edit_record_label_1_text)
-            self.edit_record_textboxes[i].grid(
-                column=5, row=6+i, pady=3, sticky=tk.W)
+            self.edit_record_textboxes[i].insert(tk.END, edit_record_label_1_text)
+            self.edit_record_textboxes[i].grid(column=5, row=6+i, pady=3, sticky=tk.W)
 
         edit_finish_button = tk.Button(
             self.root, text='編集完了', command=self.edit_finish_fanc)
-        edit_finish_button.grid(column=3, row=11, pady=3, sticky=tk.W)
+        edit_finish_button.grid(column=3, row=13, pady=3, sticky=tk.W)
 
     # 編集完了ボタン押下時の処理
     def edit_finish_fanc(self):
+        print("edit_finish_fanc")
         taskList_edited = []
         for i in range(5):
             taskList_edited.append(self.edit_record_textboxes[i].get())
-        self._d_change_task.data = taskList_edited
+
+        self._d_change_task.task_id = self.edit_record_textboxes[0].get()
+        self._d_change_task.start_time = taskList_edited[1].get()
+        self._d_change_task.finish_time = taskList_edited[2].get()
+        self._d_change_task.target = taskList_edited[3].get()
+        self._d_change_task.status = taskList_edited[4].get()
+        self._d_change_task.title = taskList_edited[5].get()
+        self._d_change_task.discription = taskList_edited[6].get()
         self._change_taskOut.write()
         print(taskList_edited)
+
+    def edit_fin_new(self):
+            print('edit_fin_new()')
+            self._d_add_task.task_id = self.edit_record_textboxes_sub[0].get()
+            self._d_add_task.start_time = self.edit_record_textboxes_sub[1].get()
+            self._d_add_task.finish_time = self.edit_record_textboxes_sub[2].get()
+            self._d_add_task.target = self.edit_record_textboxes_sub[3].get()
+            self._d_add_task.status = self.edit_record_textboxes_sub[4].get()
+            self._d_add_task.title = self.edit_record_textboxes_sub[5].get()
+            self._d_add_task.discription = self.edit_record_textboxes_sub[6].get()
+
+
+            self._add_taskOut.write()
+
+    def make_newtask_func(self):
+        root_new = tk.Tk()
+        root_new.title('新規作成')
+        root_new.geometry('400x400')
+        taskList_column = ('ID', '開始', '終了', '実行者', 'ステータス', 'タイトル', '説明')
+        self.edit_record_textboxes_sub = []
+        for i in range(7):
+            edit_record_label_0 = tk.Label(                     # 項目名
+                root_new, text=taskList_column[i],
+                font=(None, 12)
+            )
+            edit_record_label_0.grid(column=0, row=i, pady=3, sticky=tk.W)
+            self.edit_record_textboxes_sub.append(tk.Entry(root_new, width=30))
+            self.edit_record_textboxes_sub[i].delete(0, tk.END)
+            self.edit_record_textboxes_sub[i].grid(column=1, row=i, pady=3, sticky=tk.W)
+        edit_finish_new_butoon = tk.Button(root_new,text='新規作成完了',command=self.edit_fin_new)
+        edit_finish_new_butoon.grid(column=0,row=8)
+
 
 
         # initialize of configuration-data.
@@ -303,7 +347,10 @@ class display(OpenRTM_aist.DataFlowComponentBase):
         self.taskList_tree.heading('説明', text='説明', anchor='center')
 
         self.taskList_tree.grid(column=1, row=5, padx=15,
-                                pady=10, sticky=tk.W, columnspan=3, rowspan=8)
+                                pady=10, sticky=tk.W, columnspan=3, rowspan=10)
+
+        self.make_newtask_button = tk.Button(self.root,text='新規作成',command=self.make_newtask_func)
+        self.make_newtask_button.grid(column=4, row=13, padx=15,pady=10, sticky=tk.W)
 
         self.latest_task = ['', '0-0-0 0:0:0', '0-0-0 0:0:0', '', '', '', '']
 
@@ -352,14 +399,7 @@ class display(OpenRTM_aist.DataFlowComponentBase):
             ['title'],
             ['description']
         ]
-        if self._task_listIn.isNew():
-            task_list[0] = self._idIn.read().task_id
-            task_list[1] = self._idIn.read().start_time
-            task_list[2] = self._idIn.read().finish_time
-            task_list[3] = self._idIn.read().target
-            task_list[4] = self._idIn.read().status
-            task_list[5] = self._idIn.read().title
-            task_list[6] = self._idIn.read().discription
+            
 
 
         # 最新のタスクを取得する
@@ -373,12 +413,19 @@ class display(OpenRTM_aist.DataFlowComponentBase):
 
         if self._task_listIn.isNew():
             # task_listから直近かつ未完了のものを選択
-            for i in range(len(task_list[0])):
-                if not task_list[4][i]:
-                    self.latest_task = [task_list[0][i], task_list[1][i], task_list[2][i], task_list[3][i], task_list[4][i], task_list[5][i], task_list[6][i]]
-                else:
-                    break
+            # for i in range(len(task_list[0])):
+            #     if not task_list[4][i]:
+            #         self.latest_task = [task_list[0][i], task_list[1][i], task_list[2][i], task_list[3][i], task_list[4][i], task_list[5][i], task_list[6][i]]
+            #     else:
+            #         break
 
+            task_list[0] = self._idIn.read().task_id
+            task_list[1] = self._idIn.read().start_time
+            task_list[2] = self._idIn.read().finish_time
+            task_list[3] = self._idIn.read().target
+            task_list[4] = self._idIn.read().status
+            task_list[5] = self._idIn.read().title
+            task_list[6] = self._idIn.read().discription
             try:
                 if strtobool(self.latest_task[4]) == 0:
                     start_time = datetime.strptime(
@@ -452,6 +499,7 @@ class display(OpenRTM_aist.DataFlowComponentBase):
         # TODO TODO TODO 仮 TODO TODO TODO
         # taskList = [['10C7',datetime(2022,10,17,10,0,0),datetime(2022,10,17,10,20,0),'人1','タスク1']]
 
+        # タスク一覧のテーブル表示
         for i in range(min([len(task_list[j]) for j in range(7)])):
             self.taskList_tree.insert(parent='', index='end', iid=i, values=(
                 task_list[0][i],
